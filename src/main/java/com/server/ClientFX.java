@@ -3,14 +3,15 @@ package com.server;
 import org.java_websocket.WebSocket;
 
 public class ClientFX {
+    private String nombre;
+    private int id;
+    private int password;
+    private WebSocket clienteWebSocket;
 
-    private String nombre; 
-    private WebSocket clienteWebSocket; 
-    private String selectedPlayerName = null;
-    private String readyToStartAgainst = null;
-
-    public ClientFX(String nombre, WebSocket clienteWebSocket) {
+    public ClientFX(String nombre, int id, int password, WebSocket clienteWebSocket) {
         this.nombre = nombre;
+        this.id = id;
+        this.password = password;
         this.clienteWebSocket = clienteWebSocket;
     }
 
@@ -18,28 +19,27 @@ public class ClientFX {
         return nombre;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getPassword() {
+        return password;
+    }
+
     public WebSocket getClienteWebSocket() {
         return clienteWebSocket;
     }
 
-    public String getSelectedPlayerName() {
-        return selectedPlayerName;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setSelectedPlayerName(String selectedPlayerName) {
-        this.selectedPlayerName = selectedPlayerName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getReadyToStartAgainst() {
-        return readyToStartAgainst;
-    }
-
-    public void setReadyToStartAgainst(String readyToStartAgains) {
-        this.readyToStartAgainst = readyToStartAgains;
-    }
-
-    @Override
-    public String toString() {
-        return "Jugador con nombre: " + nombre + " Socket: " + clienteWebSocket + " Jugador seleccionado: " + selectedPlayerName;
+    public void setPassword(int password) {
+        this.password = password;
     }
 }
