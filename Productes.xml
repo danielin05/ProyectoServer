@@ -345,7 +345,7 @@
         <imatge> postre009.jpg </imatge>
     </producto>
 
-    <producto id = "postre010" tags = "postre, frio">
+    <producto id = "postre010" tags = "postre, frio, glutenFree">
         <nom> Macedonia de frutas </nom>
         <preu> 3.00 </preu>
         <descripcio> Combinación de frutas frescas de temporada </descripcio>
