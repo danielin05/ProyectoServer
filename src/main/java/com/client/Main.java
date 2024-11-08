@@ -8,6 +8,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,37 +17,34 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static Stage stageFX;
-
     public static WebSocketClient clienteWebSocket;
+
+    private static Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        stageFX = stage;
+        this.stage = stage;
+
         // Carrega la vista inicial des del fitxer FXML
         Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_connect.fxml"));
         Scene scene = new Scene(root);
 
-        stageFX.setScene(scene);
-        stageFX.setResizable(true);
-        stageFX.setTitle("Barretina");
-        stageFX.getIcons().add(new Image("/images/logo.png"));
-        stageFX.show();
+        stage.setScene(scene);
+        stage.setResizable(true);
+        stage.setTitle("Barretina");
+        stage.getIcons().add(new Image("/images/logo.png"));
+        stage.show();
 
         // Afegeix una icona només si no és un Mac
         if (!System.getProperty("os.name").contains("Mac")) {
-            stageFX.getIcons().add(new Image("/images/logo.png"));
+            stage.getIcons().add(new Image("/images/logo.png"));
         }
     }
 
     @Override
     public void stop() {
         System.exit(1); // Kill all executor services
-    }
-
-    public static Stage getStage() {
-        return stageFX;
     }
 
     public static void main(String[] args) {
@@ -77,6 +75,20 @@ public class Main extends Application {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     System.out.println("Conexión establecida con el servidor: " + uri);
+                    
+                    Platform.runLater(() -> {
+                    stage.hide();
+                    stage.setMaximized(true);
+                    UtilsViews.cambiarFrame(stage, "/assets/layout_clients.fxml");
+                    });
+                    
+                    stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+                        System.out.println("Ancho del Stage maximizado: " + newValue);
+                    });
+                    
+                    stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+                        System.out.println("Alto del Stage maximizado: " + newValue);
+                    });
                 }
 
                 @Override
