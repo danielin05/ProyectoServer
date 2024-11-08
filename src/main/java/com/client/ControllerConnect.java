@@ -57,8 +57,8 @@ public class ControllerConnect implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         instance = this;
-        ipField.setText("barretina3.ieti.site");
-        portField.setText("443");
+        ipField.setText("localhost");
+        portField.setText("3000");
         choiceConnect.getItems().addAll("local", "proxmox");
         choiceConnect.setValue("local");
     }

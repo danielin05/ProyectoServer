@@ -81,14 +81,6 @@ public class Main extends Application {
                     stage.setMaximized(true);
                     UtilsViews.cambiarFrame(stage, "/assets/layout_clients.fxml");
                     });
-                    
-                    stage.widthProperty().addListener((observable, oldValue, newValue) -> {
-                        System.out.println("Ancho del Stage maximizado: " + newValue);
-                    });
-                    
-                    stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-                        System.out.println("Alto del Stage maximizado: " + newValue);
-                    });
                 }
 
                 @Override
