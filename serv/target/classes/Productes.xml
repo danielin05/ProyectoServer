@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<productos>
+
+    <producto id = "bebida001" tags = "bebida, glutenFree">
+        <nom> Agua </nom>
+        <preu> 1.50 </preu>
+        <descripcio> Botella de agua de 500ml </descripcio>
+        <imatge> bebida001.jpeg </imatge>
+    </producto>
+
+    <producto id = "bebida002" tags = "bebida, gaseosa, glutenFree">
+        <nom> Agua con gas </nom>
+        <preu> 1.70 </preu>
+        <descripcio> Botella de agua con gas de 500ml </descripcio>
+        <imatge> bebida002.jpeg </imatge>
+    </producto>
+
+    <producto id = "bebida003" tags = "bebida, gaseosa, glutenFree">
+        <nom> Refresco </nom>
+        <preu> 1.80 </preu>
+        <descripcio> Botellin o lata de refresco de 333ml </descripcio>
+        <imatge> bebida003.jpg </imatge>
+    </producto>
+
+    <producto id = "bebida004" tags = "bebida, alcohol, glutenFree">
+        <nom> Vino blanco </nom>
+        <preu> 2.20 </preu>
+        <descripcio> Copa de vino blanco </descripcio>
+        <imatge> bebida004.jpg </imatge>
+    </producto>
+
+    <producto id = "bebida005" tags = "bebida, alcohol, glutenFree">
+        <nom> Vino tinto </nom>
+        <preu> 2.20 </preu>
+        <descripcio> Copa de vino tinto </descripcio>
+        <imatge> bebida005.jpg </imatge>
+    </producto>
+
+    <producto id = "bebida006" tags = "bebida, alcohol">
+        <nom> Cerveza </nom>
+        <preu> 1.80 </preu>
+        <descripcio> Botellin de cerveza de 333ml </descripcio>
+        <imatge> bebida006.jpeg </imatge>
+    </producto>
+
+    <producto id = "bebida007" tags = "bebida, alcohol, glutenFree">
+        <nom> Sangria </nom>
+        <preu> 15.00 </preu>
+        <descripcio> Jarra de 1L de sangria </descripcio>
+        <imatge> bebida007.jpeg </imatge>
+    </producto>
+
+    <producto id = "bebida008" tags = "bebida, glutenFree">
+        <nom> Cafe </nom>
+        <preu> 1.50 </preu>
+        <descripcio> Taza de cafe </descripcio>
+        <imatge> bebida008.png </imatge>
+    </producto>
+
+    <producto id = "bebida009" tags = "bebida, glutenFree">
+        <nom> Te </nom>
+        <preu> 1.50 </preu>
+        <descripcio> Taza de te </descripcio>
+        <imatge> bebida009.jpg </imatge>
+    </producto>
+
+    <producto id = "bebida010" tags = "bebida, glutenFree">
+        <nom> Cerveza sin gluten </nom>
+        <preu> 2.50 </preu>
+        <descripcio> Botellin de cerveza apta para celiacos de 333ml </descripcio>
+        <imatge> bebida010.jpeg </imatge>
+    </producto>
+
+    <producto id = "primero001" tags = "primero, caliente, marisco, glutenFree">
+        <nom> Sopa de mariscos </nom>
+        <preu> 6.50 </preu>
+        <descripcio> Sopa tradicional con gambas, mejillones y almejas </descripcio>
+        <imatge> primero001.jpg </imatge>
+    </producto>
+
+    <producto id = "primero002" tags = "primero, caliente, vegetales, glutenFree">
+        <nom> Crema de calabacín </nom>
+        <preu> 5.00 </preu>
+        <descripcio> Crema suave de calabacín con un toque de albahaca </descripcio>
+        <imatge> primero002.jpg </imatge>
+    </producto>
+
+    <producto id = "primero003" tags = "primero, caliente, vegetales, glutenFree">
+        <nom> Sopa de tomate </nom>
+        <preu> 7.50 </preu>
+        <descripcio> Sopa de tomate </descripcio>
+        <imatge> primero003.jpg </imatge>
+    </producto>
+
+    <producto id = "primero004" tags = "primero, caliente, vegetales, legumbres, glutenFree">
+        <nom> Guiso de garbanzos </nom>
+        <preu> 6.00 </preu>
+        <descripcio> Guiso de garbanzos con verduras y especias mediterráneas </descripcio>
+        <imatge> primero004.png </imatge>
+    </producto>
+
+    <producto id = "primero005" tags = "primero, caliente, pescado">
+        <nom> Calamares a la romana </nom>
+        <preu> 7.00 </preu>
+        <descripcio> Calamares rebozados con limon y allioli </descripcio>
+        <imatge> primero005.jpg </imatge>
+    </producto>
+
+    <producto id = "primero006" tags = "primero, caliente, huevo, glutenFree">
+        <nom> Tortilla de patatas </nom>
+        <preu> 4.50 </preu>
+        <descripcio> Clásica tortilla española de patatas y cebolla (Para una persona) </descripcio>
+        <imatge> primero006.jpeg </imatge>
+    </producto>
+
+    <producto id = "primero007" tags = "primero, caliente, carne, glutenFree">
+        <nom> Albóndigas caseras </nom>
+        <preu> 6.00 </preu>
+        <descripcio> Albóndigas de carne con salsa casera de tomate y hierbas con pure de patatas </descripcio>
+        <imatge> primero007.jpeg </imatge>
+    </producto>
+
+    <producto id = "primero008" tags = "primero, caliente, vegetales, pescado, glutenFree">
+        <nom> Pimientos del piquillo rellenos </nom>
+        <preu> 6.50 </preu>
+        <descripcio> Pimientos rellenos de brandada de bacalao </descripcio>
+        <imatge> primero008.jpeg </imatge>
+    </producto>
+
+    <producto id = "primero009" tags = "primero, caliente, carne, lacteo, glutenFree">
+        <nom> Croquetas de jamón ibérico </nom>
+        <preu> 5.00 </preu>
+        <descripcio> Croquetas caseras de jamón ibérico </descripcio>
+        <imatge> primero009.jpg </imatge>
+    </producto>
+
+    <producto id = "primero010" tags = "primero, caliente, pescado, vegetales">
+        <nom> Empanada de atun </nom>
+        <preu> 4.80 </preu>
+        <descripcio> Empanada tradicional rellena de atún y pimientos </descripcio>
+        <imatge> primero010.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo001" tags = "segundo, caliente, marisco, glutenFree">
+        <nom> Paella de mariscos </nom>
+        <preu> 12.00 </preu>
+        <descripcio> Paella de mariscos frescos con arroz de la tierra (Para una persona)</descripcio>
+        <imatge> segundo001.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo002" tags = "segundo, caliente, pescado, glutenFree">
+        <nom> Lubina al horno </nom>
+        <preu> 14.00 </preu>
+        <descripcio> Lubina al horno con hierbas mediterráneas </descripcio>
+        <imatge> segundo002.jpeg </imatge>
+    </producto>
+
+    <producto id = "segundo003" tags = "segundo, caliente, carne, glutenFree">
+        <nom> Cordero al romero </nom>
+        <preu> 15.50 </preu>
+        <descripcio> Cordero al horno con romero y patatas asadas </descripcio>
+        <imatge> segundo003.png </imatge>
+    </producto>
+
+    <producto id = "segundo004" tags = "segundo, caliente, carne, glutenFree">
+        <nom> Pollo a la brasa </nom>
+        <preu> 10.00 </preu>
+        <descripcio> Pollo marinado hecho a la brasa </descripcio>
+        <imatge> segundo004.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo005" tags = "segundo, caliente, frutos secos">
+        <nom> Pasta al pesto </nom>
+        <preu> 8.50 </preu>
+        <descripcio> Pasta con salsa de pesto casero </descripcio>
+        <imatge> segundo005.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo006" tags = "segundo, caliente, moluscos, glutenFree">
+        <nom> Merluza en salsa verde </nom>
+        <preu> 13.00 </preu>
+        <descripcio> Merluza con almejas y salsa verde de perejil </descripcio>
+        <imatge> segundo006.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo007" tags = "segundo, caliente, moluscos, glutenFree">
+        <nom> Pulpo a la gallega </nom>
+        <preu> 16.00 </preu>
+        <descripcio> Pulpo con pimentón y patatas </descripcio>
+        <imatge> segundo007.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo008" tags = "segundo, caliente, carne, glutenFree">
+        <nom> Costillas de cerdo BBQ </nom>
+        <preu> 12.00 </preu>
+        <descripcio> Costillas de cerdo con salsa Barbacoa </descripcio>
+        <imatge> segundo008.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo009" tags = "segundo, caliente, pescado, glutenFree">
+        <nom> Bacalao al pil-pil </nom>
+        <preu> 15.00 </preu>
+        <descripcio> Bacalao con salsa de ajo y guindilla </descripcio>
+        <imatge> segundo009.jpg </imatge>
+    </producto>
+
+    <producto id = "segundo010" tags = "segundo, caliente, vegetales, carne, lacteo, glutenFree">
+        <nom> Moussaka de berenjena </nom>
+        <preu> 9.50 </preu>
+        <descripcio> Moussaka de berenjena con carne de cordero y bechamel </descripcio>
+        <imatge> segundo010.jpg </imatge>
+    </producto>
+
+    <producto id = "frio001" tags = "frio, vegetales">
+        <nom> Ensalada griega </nom>
+        <preu> 6.00 </preu>
+        <descripcio> Ensalada con queso feta, aceitunas y pepino </descripcio>
+        <imatge> frio001.jpeg </imatge>
+    </producto>
+
+    <producto id = "frio002" tags = "frio, moluscos, crudo, glutenFree">
+        <nom> Carpaccio de pulpo </nom>
+        <preu> 8.00 </preu>
+        <descripcio> Finas lonchas de pulpo con pimentón y aceite de oliva </descripcio>
+        <imatge> frio002.jpg </imatge>
+    </producto>
+
+    <producto id = "frio003" tags = "frio, vegetales, lacteo, glutenFree">
+        <nom> Ensalada caprese </nom>
+        <preu> 5.50 </preu>
+        <descripcio> Ensalada de tomate y mozzarella con albahaca </descripcio>
+        <imatge> frio003.jpeg </imatge>
+    </producto>
+
+    <producto id = "frio004" tags = "frio, vegetales, glutenFree">
+        <nom> Gazpacho andaluz </nom>
+        <preu> 4.00 </preu>
+        <descripcio> Sopa fría de tomate y hortalizas frescas </descripcio>
+        <imatge> frio004.jpg </imatge>
+    </producto>
+
+    <producto id = "frio005" tags = "frio, vegetales, frutos secos, glutenFree">
+        <nom> Berenjenas asadas </nom>
+        <preu> 5.50 </preu>
+        <descripcio> Berenjenas asadas con miel de caña y almendras </descripcio>
+        <imatge> frio005.jpg </imatge>
+    </producto>
+
+    <producto id = "frio006" tags = "frio, vegetales">
+        <nom> Tabulé de cuscús </nom>
+        <preu> 4.80 </preu>
+        <descripcio> Ensalada de cuscús con menta y tomate </descripcio>
+        <imatge> frio006.jpg </imatge>
+    </producto>
+
+    <producto id = "frio007" tags = "frio, huevo, carne, vegetales">
+        <nom> Salmorejo cordobés </nom>
+        <preu> 4.20 </preu>
+        <descripcio> Crema de tomate y pan con huevo duro y jamón </descripcio>
+        <imatge> frio007.jpeg </imatge>
+    </producto>
+
+    <producto id = "frio008" tags = "frio, legumbres, vegetales, glutenFree">
+        <nom> Ensalada de lentejas </nom>
+        <preu> 5.00 </preu>
+        <descripcio> Ensalada de lentejas con pimiento y cebolla </descripcio>
+        <imatge> frio008.jpg </imatge>
+    </producto>
+
+    <producto id = "frio009" tags = "frio, pescado, crudo, glutenFree">
+        <nom> Ceviche de pescado </nom>
+        <preu> 7.50 </preu>
+        <descripcio> Ceviche de pescado fresco marinado en limón </descripcio>
+        <imatge> frio009.jpeg </imatge>
+    </producto>
+
+    <producto id = "frio010" tags = "frio, vegetales, pescado, lacteo, huevo, glutenFree">
+        <nom> Ensaladilla rusa </nom>
+        <preu> 4.50 </preu>
+        <descripcio> Ensalada de patatas, atún y mayonesa </descripcio>
+        <imatge> frio010.jpeg </imatge>
+    </producto>
+
+    <producto id = "postre001" tags = "postre, frio, huevo, lacteo, glutenFree">
+        <nom> Flan de caramelo </nom>
+        <preu> 3.00 </preu>
+        <descripcio> Flan casero con caramelo líquido </descripcio>
+        <imatge> postre001.jpg </imatge>
+    </producto>
+
+    <producto id = "postre002" tags = "postre, frio, lacteo, huevo">
+        <nom> Tarta de queso </nom>
+        <preu> 3.50 </preu>
+        <descripcio> Tarta de queso con mermelada de frutos rojos </descripcio>
+        <imatge> postre002.jpeg </imatge>
+    </producto>
+
+    <producto id = "postre003" tags = "postre, frio, lacteo, huevo, glutenFree">
+        <nom> Crema catalana </nom>
+        <preu> 3.80 </preu>
+        <descripcio> Postre tradicional catalán con azúcar caramelizado </descripcio>
+        <imatge> postre003.jpg </imatge>
+    </producto>
+
+    <producto id = "postre004" tags = "postre, frio, lacteo, glutenFree">
+        <nom> Helado de vainilla </nom>
+        <preu> 2.50 </preu>
+        <descripcio> Helado cremoso de vainilla </descripcio>
+        <imatge> postre004.jpg </imatge>
+    </producto>
+
+    <producto id = "postre005" tags = "postre, frio, lacteo, huevo">
+        <nom> Tiramisú </nom>
+        <preu> 4.00 </preu>
+        <descripcio> Tiramisú clásico con café y cacao en polvo </descripcio>
+        <imatge> postre005.jpg </imatge>
+    </producto>
+
+    <producto id = "postre006" tags = "postre, frio, lacteo, huevo">
+        <nom> Pastel de chocolate </nom>
+        <preu> 3.80 </preu>
+        <descripcio> Pastel de chocolate con cobertura de ganache </descripcio>
+        <imatge> postre006.jpg </imatge>
+    </producto>
+
+    <producto id = "postre007" tags = "postre, frio, glutenFree">
+        <nom> Sorbete de limón </nom>
+        <preu> 2.80 </preu>
+        <descripcio> Sorbete refrescante de limón natural </descripcio>
+        <imatge> postre007.jpg </imatge>
+    </producto>
+
+    <producto id = "postre008" tags = "postre, frio, lacteo, glutenFree">
+        <nom> Arroz con leche </nom>
+        <preu> 2.50 </preu>
+        <descripcio> Postre cremoso de arroz con canela y limón </descripcio>
+        <imatge> postre008.jpeg </imatge>
+    </producto>
+
+    <producto id = "postre009" tags = "postre, frio, lacteo, glutenFree">
+        <nom> Panna cotta </nom>
+        <preu> 3.20 </preu>
+        <descripcio> Panna cotta italiana con frutas del bosque </descripcio>
+        <imatge> postre009.jpg </imatge>
+    </producto>
+
+    <producto id = "postre010" tags = "postre, frio, glutenFree">
+        <nom> Macedonia de frutas </nom>
+        <preu> 3.00 </preu>
+        <descripcio> Combinación de frutas frescas de temporada </descripcio>
+        <imatge> postre010.jpg </imatge>
+    </producto>
+
+</productos>
