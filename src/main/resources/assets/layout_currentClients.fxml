@@ -3,9 +3,8 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.ControllerCurrentClients">
    <children>
-      <Canvas fx:id="canvasCurrentUsers" height="700.0" width="1100.0" />
+      <Canvas fx:id="canvasCurrentUsers" height="670.0" layoutY="30.0" width="1100.0" />
    </children>
 </Pane>

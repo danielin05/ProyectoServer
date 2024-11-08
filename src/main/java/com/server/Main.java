@@ -38,7 +38,11 @@ public class Main extends WebSocketServer {
         currentClients = new ArrayList<>();
         clients = new ArrayList<>();
 
-        this.productList = loadProducts();
+        productList = loadProducts();
+
+        currentClients.add(new ClientFX("Admin", 1, 1, null));
+        currentClients.add(new ClientFX("Responsable", 2, 2, null));
+        currentClients.add(new ClientFX("Cliente", 3, 3, null));
 
         clients.add(new ClientFX("Admin", 1, 1, null));
         clients.add(new ClientFX("Responsable", 2, 2, null));
