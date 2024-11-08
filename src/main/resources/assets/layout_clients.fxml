@@ -95,6 +95,17 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
+                  <Button fx:id="logInUser" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#logInUser" prefHeight="40.0" text="Iniciar sesión">
+                     <font>
+                        <Font name="Microsoft YaHei" size="16.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
                   <Button fx:id="usersButton" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#usersButton" prefHeight="40.0" text="Usuarios">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" top="5.0" />
