@@ -21,10 +21,13 @@
         </rowConstraints>
          <children>
             <Canvas fx:id="canvasCurrentUsers" height="640.0" width="1100.0" GridPane.rowIndex="1" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
                <children>
-                  <Button fx:id="enterButton" mnemonicParsing="false" onAction="#enterButton" text="Entrada" />
-                  <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitButton" text="Salida" />
+                  <Button fx:id="enterButton" mnemonicParsing="false" onAction="#enterButton" prefHeight="28.0" prefWidth="84.0" stylesheets="@bttuon2.css" text="Entrada" />
+                  <Pane prefHeight="200.0" prefWidth="50.0" />
+                  <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitButton" prefHeight="28.0" prefWidth="84.0" stylesheets="@bttuon2.css" text="Salida" />
+                  <Pane prefHeight="200.0" prefWidth="50.0" />
+                  <Button fx:id="consuptionButton" mnemonicParsing="false" onAction="#consuptionButton" prefHeight="28.0" prefWidth="144.0" stylesheets="@bttuon2.css" text="Consumo interno" />
                </children>
             </HBox>
          </children>

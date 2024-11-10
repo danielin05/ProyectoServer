@@ -1,0 +1,36 @@
+/* Estilo general para los botones */
+.button {
+    -fx-font-family: "Calibri", sans-serif; /* Fuente neutra y legible */
+    -fx-font-size: 16px; /* Tamaño de fuente adecuado */
+    -fx-text-fill: #333333; /* Texto oscuro para buen contraste */
+    -fx-background-color: #F5F5F5; /* Color de fondo gris claro */
+    -fx-background-radius: 5px; /* Bordes ligeramente redondeados */
+    -fx-border-color: #D3D3D3; /* Borde gris claro */
+    -fx-border-width: 1px; /* Grosor del borde */
+    -fx-border-radius: 5px; /* Bordes redondeados para el borde */
+    -fx-cursor: hand; /* Cambia el cursor al pasar sobre el botón */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 6); /* Sombra sutil */
+    -fx-alignment: center; /* Centra el texto */
+    -fx-text-alignment: center; /* Centrado del texto */
+}
+
+/* Efecto al pasar el mouse (hover) */
+.button:hover {
+    -fx-background-color: #E0E0E0; /* Color de fondo más oscuro en hover */
+    -fx-border-color: #B0B0B0; /* Borde gris más oscuro */
+    -fx-text-fill: #000000; /* Texto negro en hover para mejor contraste */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 8); /* Sombra más fuerte en hover */
+}
+
+/* Estilo para los botones deshabilitados */
+.button:disabled {
+    -fx-background-color: #D3D3D3; /* Gris Claro */
+    -fx-border-color: #A9A9A9; /* Gris más oscuro */
+    -fx-text-fill: #B0B0B0; /* Texto gris claro */
+}
+
+/* Asegura que el texto se mantenga centrado verticalmente */
+.button .text {
+    -fx-alignment: center; /* Alineación centrada */
+    -fx-text-fill: #333333;  /* Texto oscuro */
+}

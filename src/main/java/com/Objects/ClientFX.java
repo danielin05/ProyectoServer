@@ -1,17 +1,21 @@
-package com.server;
+package com.Objects;
+
+import java.util.Date;
 
 import org.java_websocket.WebSocket;
 
 public class ClientFX {
     private String nombre;
-    private int id;
-    private int password;
+    private String id;
+    private String password;
+    private Date lastAcces;
     private WebSocket clienteWebSocket;
 
-    public ClientFX(String nombre, int id, int password, WebSocket clienteWebSocket) {
+    public ClientFX(String nombre, String id, String password, Date lastAcces, WebSocket clienteWebSocket) {
         this.nombre = nombre;
         this.id = id;
         this.password = password;
+        this.lastAcces = lastAcces;
         this.clienteWebSocket = clienteWebSocket;
     }
 
@@ -19,12 +23,16 @@ public class ClientFX {
         return nombre;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return password;
+    }
+
+    public Date getLastAcces() {
+        return lastAcces;
     }
 
     public WebSocket getClienteWebSocket() {
@@ -35,11 +43,15 @@ public class ClientFX {
         this.nombre = nombre;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setLastAcces(Date lastAcces) {
+        this.lastAcces = lastAcces;
     }
 }

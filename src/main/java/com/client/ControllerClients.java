@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.JSONObject;
+
 public class ControllerClients implements Initializable {
 
     @FXML
@@ -28,6 +30,11 @@ public class ControllerClients implements Initializable {
 
     @FXML
     private GridPane rootGridPane;
+
+    @FXML
+    private Button reloadButton;
+
+    public static ControllerClients instance;
 
     @FXML
     private void backButton(ActionEvent event) {
@@ -49,8 +56,21 @@ public class ControllerClients implements Initializable {
         System.out.println("Se pulsó el botón addUsers");
     }
 
+    @FXML
+    private void reloadButton(ActionEvent event) {
+        System.out.println("Se pulsó el botón reload");
+        JSONObject message = new JSONObject();
+        message.put("type", "reload"); 
+        Main.clienteWebSocket.send(message.toString());
+    }
+
+    public GridPane getRootGridPane() {
+        return rootGridPane;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
         try {
 
             Parent loadedPane = FXMLLoader.load(getClass().getResource("/assets/layout_currentClients.fxml"));
@@ -61,6 +81,5 @@ public class ControllerClients implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Cargó");
     }
 }

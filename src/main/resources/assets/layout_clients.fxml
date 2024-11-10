@@ -71,9 +71,10 @@
                   <Font name="Calibri Bold" size="15.0" />
                </font>
             </Button>
+            <Button fx:id="reloadButton" mnemonicParsing="false" onAction="#reloadButton" prefHeight="40.0" prefWidth="40.0" text="r" />
         </items>
       </ToolBar>
-      <GridPane fx:id="rootGridPane" gridLinesVisible="true" prefHeight="770.0" prefWidth="1550.0" GridPane.rowIndex="1">
+      <GridPane fx:id="rootGridPane" gridLinesVisible="true" prefHeight="770.0" prefWidth="1550.0" style="-fx-background-color: E5DDD8;" GridPane.rowIndex="1">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="366.0" prefWidth="366.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -82,9 +83,9 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: A69286;">
                <children>
-                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" text="Acerca de" textAlignment="CENTER">
+                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="300.0" stylesheets="@button.css" text="Acerca de" textAlignment="CENTER">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
@@ -95,7 +96,7 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
-                  <Button fx:id="logInUser" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#logInUser" prefHeight="40.0" text="Iniciar sesión">
+                  <Button fx:id="logInUser" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#logInUser" prefHeight="40.0" prefWidth="300.0" stylesheets="@button.css" text="Iniciar sesión">
                      <font>
                         <Font name="Microsoft YaHei" size="16.0" />
                      </font>
@@ -106,7 +107,7 @@
                         <Insets left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="usersButton" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#usersButton" prefHeight="40.0" text="Usuarios">
+                  <Button fx:id="usersButton" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" onAction="#usersButton" prefHeight="40.0" prefWidth="300.0" stylesheets="@button.css" text="Usuarios">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
@@ -117,7 +118,7 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
-                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" text="Fecha y hora">
+                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="300.0" stylesheets="@button.css" text="Fecha y hora">
                      <font>
                         <Font name="Microsoft YaHei" size="16.0" />
                      </font>
@@ -128,7 +129,7 @@
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
-                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" text="Ajustes">
+                  <Button alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="300.0" stylesheets="@button.css" text="Ajustes">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
@@ -140,6 +141,12 @@
                      </graphic>
                   </Button>
                </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
             </VBox>
          </children>
       </GridPane>

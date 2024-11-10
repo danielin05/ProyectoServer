@@ -2,6 +2,8 @@ package com.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import java.util.Date;
 
 public class Main extends Application {
 
@@ -102,26 +105,57 @@ public class Main extends Application {
                             clients.clear();
                             currentClients.clear();
 
+                            System.out.println(message);
+
+
                             // Parsear y cargar los clientes en las listas
                             JSONArray clientsArray = obj.getJSONArray("clients");
                             JSONArray currentClientsArray = obj.getJSONArray("currentClients");
 
                             for (int i = 0; i < clientsArray.length(); i++) {
                                 JSONObject clientObj = clientsArray.getJSONObject(i);
-                                int id = clientObj.getInt("id");
+                                String id = clientObj.getString("id");
                                 String nombre = clientObj.getString("nombre");
-
-                                clients.add(new ClientFX(nombre, id, 0, null)); // Asume password y WebSocket no están disponibles
-                            }
-
-                            for (int i = 0; i < currentClientsArray.length(); i++) {
-                                JSONObject currentClientObj = currentClientsArray.getJSONObject(i);
-                                int id = currentClientObj.getInt("id");
-                                String nombre = currentClientObj.getString("nombre");
-
-                                currentClients.add(new ClientFX(nombre, id, 0, null));
+                                String contraseña = clientObj.getString("password");
+                                
+                                String lastAccesStr = clientObj.getString("lastAcces");
+                                Date lastAcces = null;
+                            
+                                // Comprobar si la fecha es "No disponible" o un valor válido
+                                if (!"No disponible".equals(lastAccesStr)) {
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                    try {
+                                        lastAcces = dateFormat.parse(lastAccesStr);  // Parsear solo si la fecha es válida
+                                    } catch (ParseException e) {
+                                        e.printStackTrace(); // Manejar la excepción si es necesario
+                                    }
+                                }
+                            
+                                clients.add(new ClientFX(nombre, id, contraseña, lastAcces, null));
                             }
                             
+                            for (int i = 0; i < currentClientsArray.length(); i++) {
+                                JSONObject currentClientObj = currentClientsArray.getJSONObject(i);
+                                String id = currentClientObj.getString("id");
+                                String nombre = currentClientObj.getString("nombre");
+                                String contraseña = currentClientObj.getString("password");
+                            
+                                String lastAccesStr = currentClientObj.getString("lastAcces");
+                                Date lastAcces = null;
+                            
+                                // Comprobar si la fecha es "No disponible" o un valor válido
+                                if (!"No disponible".equals(lastAccesStr)) {
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                    try {
+                                        lastAcces = dateFormat.parse(lastAccesStr);  // Parsear solo si la fecha es válida
+                                    } catch (ParseException e) {
+                                        e.printStackTrace(); // Manejar la excepción si es necesario
+                                    }
+                                }
+                            
+                                currentClients.add(new ClientFX(nombre, id, contraseña, lastAcces, null));
+                            }        
+                                
                             System.out.println("Clients loaded: " + clients.size());
                             System.out.println("Current clients loaded: " + currentClients.size());
 

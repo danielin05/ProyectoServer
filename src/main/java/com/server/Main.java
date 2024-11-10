@@ -10,6 +10,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.Objects.ClientFX;
+
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -40,13 +43,13 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
-        currentClients.add(new ClientFX("Admin", 1, 1, null));
-        currentClients.add(new ClientFX("Responsable", 2, 2, null));
-        currentClients.add(new ClientFX("Cliente", 3, 3, null));
+        currentClients.add(new ClientFX("Admin", "1", "1", null,null));
+        currentClients.add(new ClientFX("Responsable", "2", "2", null, null));
+        currentClients.add(new ClientFX("Cliente", "3", "3", null, null));
 
-        clients.add(new ClientFX("Admin", 1, 1, null));
-        clients.add(new ClientFX("Responsable", 2, 2, null));
-        clients.add(new ClientFX("Cliente", 3, 3, null));
+        clients.add(new ClientFX("Admin", "1", "1", null, null));
+        clients.add(new ClientFX("Responsable", "2", "2", null, null));
+        clients.add(new ClientFX("Cliente", "3", "3", null, null));
     }
 
     @Override
@@ -56,8 +59,7 @@ public class Main extends WebSocketServer {
         //Añadir conexión a la lista de conexiones
         webSockets.add(conn);
 
-        sendClientsData();
-
+        conn.send(loadClientsData());
         sendProductsList(conn);
         
     }
@@ -74,26 +76,47 @@ public class Main extends WebSocketServer {
                 break;
             }
         }
-        sendClientsData();
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        JSONObject obj = new JSONObject(message);
-        WebSocket clientId = null;
-        for (ClientFX cliente : clients) {
-            if (cliente.getClienteWebSocket() == conn) {
-                clientId = cliente.getClienteWebSocket();
-                break;
-            }
-        }
+        JSONObject obj = new JSONObject(message); // Convertir el mensaje en un JSON
 
+        // Comprobar si el mensaje tiene un tipo definido
         if (obj.has("type")) {
-            String type = obj.getString("type");
+            String type = obj.getString("type"); // Obtener el tipo de mensaje
+
             switch (type) {
-                case "hola":
+                case "reload":
+                    // Implementación para manejar el mensaje "reload"
+                    System.out.println("Mensaje recibido: reload");
+
+                    conn.send(loadClientsData());
+                    sendProductsList(conn);
+
                     break;
 
+                case "addClient":
+                    // Implementación para manejar el mensaje "addClient"
+                    System.out.println("Mensaje recibido: addClient");
+                    //handleAddClient(clientId, obj);
+                    break;
+
+                case "logInClient":
+                    // Implementación para manejar el mensaje "logInClient"
+                    System.out.println("Mensaje recibido: logInClient");
+                    //handleLogInClient(clientId, obj);
+                    break;
+
+                case "exitClient":
+                    // Implementación para manejar el mensaje "exitClient"
+                    System.out.println("Mensaje recibido: exitClient");
+                    //handleExitClient(clientId);
+                    break;
+
+                default:
+                    System.out.println("Mensaje no reconocido: " + type);
+                    break;
             }
         }
     }
@@ -136,13 +159,22 @@ public class Main extends WebSocketServer {
         }
     }
 
-    private void sendClientsData() {
+    private String loadClientsData() {
         // JSON para la lista de currentClients
         JSONArray currentClientsList = new JSONArray();
         for (ClientFX client : currentClients) {
             JSONObject clientObj = new JSONObject();
             clientObj.put("nombre", client.getNombre());
             clientObj.put("id", client.getId());
+            clientObj.put("password", client.getPassword());
+    
+            // Verificar si lastAcces es null antes de llamar a toString
+            if (client.getLastAcces() != null) {
+                clientObj.put("lastAcces", client.getLastAcces().toString());
+            } else {
+                clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
+            }
+    
             currentClientsList.put(clientObj);
         }
     
@@ -152,6 +184,15 @@ public class Main extends WebSocketServer {
             JSONObject clientObj = new JSONObject();
             clientObj.put("nombre", client.getNombre());
             clientObj.put("id", client.getId());
+            clientObj.put("password", client.getPassword());
+    
+            // Verificar si lastAcces es null antes de llamar a toString
+            if (client.getLastAcces() != null) {
+                clientObj.put("lastAcces", client.getLastAcces().toString());
+            } else {
+                clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
+            }
+    
             clientsList.put(clientObj);
         }
     
@@ -161,17 +202,16 @@ public class Main extends WebSocketServer {
         response.put("currentClients", currentClientsList);
         response.put("clients", clientsList);
     
-        for (WebSocket webSocket : webSockets) {
-            try {
-                webSocket.send(response.toString());
-            } catch (WebsocketNotConnectedException e) {
-                System.out.println("Cliente no conectado: " + webSocket);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+        System.out.println(response.toString());
     
+        return response.toString();
+    }    
+
+    @Override
+    public void broadcast(String text) {
+        super.broadcast(text);
+    }
+
     private void sendProductsList(WebSocket conn) {
         JSONObject response = new JSONObject();
         response.put("type", "productsList");
@@ -185,6 +225,8 @@ public class Main extends WebSocketServer {
             e.printStackTrace();
         }
     }
+
+
 
     private static JSONArray loadProducts() {
         try {
@@ -220,8 +262,6 @@ public class Main extends WebSocketServer {
                     productList.put(product);
                 }
             }
-
-            System.out.println(productList);
 
             return productList;
 

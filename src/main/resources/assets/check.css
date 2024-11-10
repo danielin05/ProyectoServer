@@ -1,0 +1,45 @@
+/* Estilo general para el ToggleButton */
+.toggle-button {
+    -fx-font-size: 18px; /* Tamaño de la fuente para los símbolos */
+    -fx-text-fill: transparent; /* Hacer que el texto sea invisible (usaremos iconos) */
+    -fx-padding: 5px 0 5px 0; /* Margen superior e inferior de 5px, sin relleno horizontal */
+    -fx-background-color: transparent; /* Fondo transparente */
+    -fx-padding: 0px; /* Sin relleno extra */
+    -fx-min-width: 25px; /* Ancho mínimo del botón */
+    -fx-min-height: 25px; /* Alto mínimo del botón */
+    -fx-max-width: 25px; /* Ancho máximo del botón */
+    -fx-max-height: 25px; /* Alto máximo del botón */
+    -fx-border-radius: 5px; /* Bordes redondeados */
+    -fx-border-color: #D3D3D3; /* Color del borde */
+    -fx-border-width: 2px; /* Grosor del borde */
+    -fx-cursor: hand; /* Cambia el cursor a mano al pasar por encima */
+    -fx-alignment: CENTER; /* Alineación del texto (centrado en X e Y) */
+    -fx-text-alignment: center; /* Centra el texto (en caso de que se utilice texto) */
+}
+
+/* Estado seleccionado: El ToggleButton muestra un check verde */
+.toggle-button:selected {
+    -fx-text-fill: #4CAF50; /* Color verde para el check */
+    -fx-background-color: transparent; /* Fondo transparente */
+    -fx-border-color: #4CAF50; /* Borde verde */
+}
+
+/* Estado no seleccionado: El ToggleButton muestra una cruz roja */
+.toggle-button:unselected {
+    -fx-text-fill: #F44336; /* Color rojo para la cruz */
+    -fx-background-color: transparent; /* Fondo transparente */
+    -fx-border-color: #F44336; /* Borde rojo */
+}
+
+/* Estilo del ToggleButton cuando pasa el mouse (hover) */
+.toggle-button:hover {
+    -fx-border-color: #8BC34A; /* Borde verde más claro */
+    -fx-text-fill: #8BC34A; /* Texto verde más claro */
+}
+
+/* Estilo para el ToggleButton deshabilitado */
+.toggle-button:disabled {
+    -fx-text-fill: #B0B0B0; /* Texto gris */
+    -fx-background-color: transparent;
+    -fx-border-color: #B0B0B0; /* Borde gris claro */
+}

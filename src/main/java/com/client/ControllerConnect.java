@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 
-import org.java_websocket.client.WebSocketClient;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,10 +26,6 @@ public class ControllerConnect implements Initializable {
 
     @FXML
     private ComboBox<String> choiceConnect;
-
-    public static WebSocketClient clienteWebSocket;
-
-    public static ControllerConnect instance;
 
     @FXML
     private void acceptButtonAction(ActionEvent event) {
@@ -56,18 +51,9 @@ public class ControllerConnect implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        instance = this;
         ipField.setText("localhost");
         portField.setText("3000");
         choiceConnect.getItems().addAll("local", "proxmox");
         choiceConnect.setValue("local");
-    }
-
-    public void sendMessage(String message) {
-        if (clienteWebSocket != null && clienteWebSocket.isOpen()) {
-            clienteWebSocket.send(message);
-        } else {
-            System.out.println("No se puede enviar el mensaje. Conexión no está abierta.");
-        }
     }
 }

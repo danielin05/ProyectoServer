@@ -1,0 +1,62 @@
+/* Estilo general para los botones */
+.button {
+    -fx-font-family: "Calibri"; /* Fuente más moderna y legible */
+    -fx-font-size: 16px;
+    -fx-text-fill: white;  /* Texto blanco para contraste */
+    -fx-background-color: #8C644D; /* Color de fondo marrón medio */
+    -fx-background-radius: 20px;  /* Bordes más redondeados */
+    -fx-border-color: #26170F; /* Borde marrón oscuro */
+    -fx-border-width: 2px; /* Grosor del borde */
+    -fx-border-radius: 20px; /* Bordes redondeados también para el borde */
+    -fx-cursor: hand; /* Cambia el cursor al pasar sobre el botón */
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2), 8, 0, 0, 6 ); /* Sombra suave */
+    -fx-alignment: CENTER_LEFT; /* Alineación del texto a la izquierda en el eje X */
+    -fx-text-alignment: center; /* Centrado del texto en el eje Y */
+}
+
+/* Efecto al pasar el mouse (hover) */
+.button:hover {
+    -fx-background-color: #A69286; /* Color más claro de la paleta */
+    -fx-border-color: #8C644D; /* Cambio de borde a un tono más cálido */
+    -fx-text-fill: #26170F; /* Texto marrón oscuro */
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.3), 10, 0, 0, 8 ); /* Sombra más fuerte al pasar el mouse */
+}
+
+/* Estilo para el botón primario (por ejemplo, "Aceptar") */
+.button.primary {
+    -fx-background-color: #A69286; /* Color suave de la paleta */
+    -fx-border-color: #26170F; /* Borde marrón oscuro */
+    -fx-text-fill: white;
+}
+
+.button.primary:hover {
+    -fx-background-color: #D9CAC1; /* Un tono aún más claro */
+    -fx-border-color: #8C644D; /* Cambia el borde al tono más claro */
+    -fx-text-fill: #26170F; /* Texto marrón oscuro */
+}
+
+/* Estilo para el botón secundario (por ejemplo, "Cancelar") */
+.button.secondary {
+    -fx-background-color: #D9CAC1; /* Tono suave de crema */
+    -fx-border-color: #8C644D; /* Borde del color más cálido */
+    -fx-text-fill: white;
+}
+
+.button.secondary:hover {
+    -fx-background-color: #8C644D; /* Vuelve a un tono marrón claro */
+    -fx-border-color: #26170F; /* Borde marrón oscuro */
+    -fx-text-fill: white;
+}
+
+/* Estilo para los botones deshabilitados */
+.button:disabled {
+    -fx-background-color: #D3D3D3; /* Gris Claro */
+    -fx-border-color: #A9A9A9; /* Gris más oscuro */
+    -fx-text-fill: #B0B0B0; /* Texto gris claro */
+}
+
+/* Asegura que el texto se mantenga centrado verticalmente */
+.button .text {
+    -fx-alignment: CENTER_LEFT; /* Alineación a la izquierda horizontalmente */
+    -fx-text-fill: white;  /* Texto en blanco */
+}
