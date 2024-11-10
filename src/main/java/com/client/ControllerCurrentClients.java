@@ -1,9 +1,11 @@
 package com.client;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
@@ -14,6 +16,12 @@ public class ControllerCurrentClients implements Initializable {
 
     @FXML
     private Canvas canvasCurrentUsers;
+
+    @FXML
+    private Button enterButton;
+
+    @FXML
+    private Button exitButton;
 
     private static final int RECTANGLE_WIDTH = 135;  // Ancho del rectángulo
     private static final int RECTANGLE_HEIGHT = 180;  // Altura del rectángulo
@@ -26,6 +34,18 @@ public class ControllerCurrentClients implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         drawRectanglesOnCanvas();
+    }
+
+    @FXML
+    private void enterButton(ActionEvent event) {
+        System.out.println("Se pulsó el botón entrar");
+        // Cierra la ventana o regresa a la pantalla anterior
+    }
+
+    @FXML
+    private void exitButton(ActionEvent event) {
+        System.out.println("Se pulsó el botón salir");
+        // Cierra la ventana o regresa a la pantalla anterior
     }
 
     private void drawRectanglesOnCanvas() {

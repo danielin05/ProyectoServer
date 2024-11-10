@@ -56,7 +56,10 @@ public class Main extends WebSocketServer {
         //Añadir conexión a la lista de conexiones
         webSockets.add(conn);
 
-        sendClientsList();
+        sendClientsData();
+
+        sendProductsList(conn);
+        
     }
 
     @Override
@@ -71,7 +74,7 @@ public class Main extends WebSocketServer {
                 break;
             }
         }
-        sendClientsList();
+        sendClientsData();
     }
 
     @Override
@@ -133,19 +136,31 @@ public class Main extends WebSocketServer {
         }
     }
 
-    private void sendClientsList() {
-        JSONArray clientList = new JSONArray();
+    private void sendClientsData() {
+        // JSON para la lista de currentClients
+        JSONArray currentClientsList = new JSONArray();
         for (ClientFX client : currentClients) {
             JSONObject clientObj = new JSONObject();
             clientObj.put("nombre", client.getNombre());
             clientObj.put("id", client.getId());
-            clientList.put(clientObj);
+            currentClientsList.put(clientObj);
         }
-
+    
+        // JSON para la lista de clients
+        JSONArray clientsList = new JSONArray();
+        for (ClientFX client : clients) {
+            JSONObject clientObj = new JSONObject();
+            clientObj.put("nombre", client.getNombre());
+            clientObj.put("id", client.getId());
+            clientsList.put(clientObj);
+        }
+    
+        // Armar el mensaje para enviar ambas listas
         JSONObject response = new JSONObject();
-        response.put("type", "clientList");
-        response.put("list", clientList);
-
+        response.put("type", "clientsData");
+        response.put("currentClients", currentClientsList);
+        response.put("clients", clientsList);
+    
         for (WebSocket webSocket : webSockets) {
             try {
                 webSocket.send(response.toString());
@@ -156,8 +171,22 @@ public class Main extends WebSocketServer {
             }
         }
     }
+    
+    private void sendProductsList(WebSocket conn) {
+        JSONObject response = new JSONObject();
+        response.put("type", "productsList");
+        response.put("list", productList);
+    
+        try {
+            conn.send(response.toString());
+        } catch (WebsocketNotConnectedException e) {
+            System.out.println("Cliente no conectado: " + conn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    private static JSONArray loadProducts() { //Cargar productos
+    private static JSONArray loadProducts() {
         try {
 
             String userDir = System.getProperty("user.dir");

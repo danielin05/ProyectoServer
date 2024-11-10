@@ -2,10 +2,16 @@ package com.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.Objects.ClientFX;
+import com.Objects.Product;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,15 +24,18 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static WebSocketClient clienteWebSocket;
-
     private static Stage stage;
+
+    // Listas para almacenar los datos de clientes y productos
+    public static List<ClientFX> clients = new ArrayList<>();
+    public static List<ClientFX> currentClients = new ArrayList<>();
+    public static List<Product> productsList = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws Exception {
-
         this.stage = stage;
-
-        // Carrega la vista inicial des del fitxer FXML
+        
+        // Carga la vista inicial desde el archivo FXML
         Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_connect.fxml"));
         Scene scene = new Scene(root);
 
@@ -36,7 +45,7 @@ public class Main extends Application {
         stage.getIcons().add(new Image("/images/logo.png"));
         stage.show();
 
-        // Afegeix una icona només si no és un Mac
+        // Agrega un icono solo si no es un Mac
         if (!System.getProperty("os.name").contains("Mac")) {
             stage.getIcons().add(new Image("/images/logo.png"));
         }
@@ -44,7 +53,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        System.exit(1); // Kill all executor services
+        System.exit(1); // Termina todos los servicios
     }
 
     public static void main(String[] args) {
@@ -77,9 +86,9 @@ public class Main extends Application {
                     System.out.println("Conexión establecida con el servidor: " + uri);
                     
                     Platform.runLater(() -> {
-                    stage.hide();
-                    stage.setMaximized(true);
-                    UtilsViews.cambiarFrame(stage, "/assets/layout_clients.fxml");
+                        stage.hide();
+                        stage.setMaximized(true);
+                        UtilsViews.cambiarFrame(stage, "/assets/layout_clients.fxml");
                     });
                 }
 
@@ -88,11 +97,52 @@ public class Main extends Application {
                     JSONObject obj = new JSONObject(message);
                     if (obj.has("type")) {
                         String type = obj.getString("type");
-                        if ("clientList".equals(type)) {
+                        
+                        if ("clientsData".equals(type)) {
+                            clients.clear();
+                            currentClients.clear();
 
-                            System.out.println(message);
+                            // Parsear y cargar los clientes en las listas
+                            JSONArray clientsArray = obj.getJSONArray("clients");
+                            JSONArray currentClientsArray = obj.getJSONArray("currentClients");
 
-                        }   
+                            for (int i = 0; i < clientsArray.length(); i++) {
+                                JSONObject clientObj = clientsArray.getJSONObject(i);
+                                int id = clientObj.getInt("id");
+                                String nombre = clientObj.getString("nombre");
+
+                                clients.add(new ClientFX(nombre, id, 0, null)); // Asume password y WebSocket no están disponibles
+                            }
+
+                            for (int i = 0; i < currentClientsArray.length(); i++) {
+                                JSONObject currentClientObj = currentClientsArray.getJSONObject(i);
+                                int id = currentClientObj.getInt("id");
+                                String nombre = currentClientObj.getString("nombre");
+
+                                currentClients.add(new ClientFX(nombre, id, 0, null));
+                            }
+                            
+                            System.out.println("Clients loaded: " + clients.size());
+                            System.out.println("Current clients loaded: " + currentClients.size());
+
+                        } else if ("productsList".equals(type)) {
+                            productsList.clear();
+
+                            // Parsear y cargar los productos en la lista
+                            JSONArray productsArray = obj.getJSONArray("list");
+
+                            for (int i = 0; i < productsArray.length(); i++) {
+                                JSONObject productObj = productsArray.getJSONObject(i);
+                                String nombre = productObj.getString("nom").trim();
+                                String preu = productObj.getString("preu").trim();
+                                String description = productObj.getString("descripcio").trim();
+                                String imageURL = productObj.getString("imatge").trim();
+
+                                productsList.add(new Product(nombre, preu, description, imageURL));
+                            }
+
+                            System.out.println("Products loaded: " + productsList.size());
+                        }
                     }
                 }
                 
