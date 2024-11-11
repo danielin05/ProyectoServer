@@ -47,6 +47,8 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
+        System.out.println(productList);
+
         currentClients.add(new ClientFX("Admin", "1", "1", null,null));
         currentClients.add(new ClientFX("Responsable", "2", "2", null, null));
         currentClients.add(new ClientFX("Cliente", "3", "3", null, null));
@@ -113,6 +115,7 @@ public class Main extends WebSocketServer {
 
                     conn.send(loadClientsData());
                     sendProductsList(conn);
+                    conn.send(loadComandsData());
 
                     break;
 
