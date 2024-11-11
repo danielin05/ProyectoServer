@@ -34,7 +34,7 @@ public class Main extends Application {
     public static List<ClientFX> clients = new ArrayList<>();
     public static List<ClientFX> currentClients = new ArrayList<>();
     public static List<Product> productsList = new ArrayList<>();
-    private static List<Comanda> comands = new ArrayList<>();
+    public static List<Comanda> comands = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -172,13 +172,46 @@ public class Main extends Application {
                                 JSONObject productObj = productsArray.getJSONObject(i);
                                 String nombre = productObj.getString("nom").trim();
                                 String preu = productObj.getString("preu").trim();
-                                String description = productObj.getString("descripcio").trim();
-                                String imageURL = productObj.getString("imatge").trim();
-
-                                productsList.add(new Product(nombre, preu, description, imageURL));
+                                String description = productObj.optString("descripcio", "").trim();
+                                String imageURL = productObj.optString("imatge", "").trim();
+                            
+                                Product newProduct = new Product(nombre, preu, description, imageURL);
+                            
+                                List<String> tags = new ArrayList<>();
+                            
+                                // Verificar si "tags" es un JSONArray o un String
+                                if (productObj.has("tags")) {
+                                    Object tagsObject = productObj.get("tags");
+                            
+                                    if (tagsObject instanceof JSONArray) {
+                                        JSONArray tagsArray = (JSONArray) tagsObject;
+                                        for (int e = 0; e < tagsArray.length(); e++) {
+                                            tags.add(tagsArray.getString(e));
+                                        }
+                                    } else if (tagsObject instanceof String) {
+                                        String tagsString = (String) tagsObject;
+                                        String[] tagsArray = tagsString.split(",\\s*"); // Dividir por comas y eliminar espacios
+                                        for (String tag : tagsArray) {
+                                            tags.add(tag);
+                                        }
+                                    }
+                                }
+                            
+                                newProduct.addTags(tags);
+                                productsList.add(newProduct);
                             }
-
+                            
                             System.out.println("Products loaded: " + productsList.size());
+
+                            System.out.println("--------bebidas--------");
+                            System.out.println(filterProductsByTag(productsList, "bebida"));
+                            System.out.println("--------caliente--------");
+                            System.out.println(filterProductsByTag(productsList, "caliente"));
+                            System.out.println("--------frio--------");
+                            System.out.println(filterProductsByTag(productsList, "frio"));
+                            System.out.println("--------postre--------");
+                            System.out.println(filterProductsByTag(productsList, "postre"));
+                            
 
                         } else if ("comandsData".equals(type)) {
 
@@ -242,5 +275,16 @@ public class Main extends Application {
         for (Comanda comanda : comands) {
             System.out.println(comanda);
         }
+    }
+
+    private static List<Product> filterProductsByTag(List<Product> products, String tag) {
+        List<Product> filteredProducts = new ArrayList<>();
+
+        for (Product product : products) {
+            if (product.getTags().contains(tag)) {
+                filteredProducts.add(product);
+            }
+        }
+        return filteredProducts;
     }
 }
