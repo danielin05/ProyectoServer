@@ -1,0 +1,37 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #f3f4f6;
+}
+
+/* TabPane Styling */
+.tab-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: #e5e7eb;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 8px 8px 0 0;
+}
+
+/* Individual Tabs */
+.tab {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.tab:selected {
+    -fx-background-color: #34d399; /* Green color for selected tab */
+    -fx-text-fill: white;
+    -fx-border-radius: 8px 8px 0 0;
+}
+
+.tab-label {
+    -fx-text-fill: #4b5563; /* Dark gray text */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
