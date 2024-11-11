@@ -38,7 +38,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        this.stage = stage;
+        Main.stage = stage;
         
         // Carga la vista inicial desde el archivo FXML
         Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_connect.fxml"));
@@ -107,7 +107,7 @@ public class Main extends Application {
                             clients.clear();
                             currentClients.clear();
 
-                            System.out.println(message);
+                            System.out.println("hola " + message);
 
 
                             // Parsear y cargar los clientes en las listas
@@ -181,34 +181,41 @@ public class Main extends Application {
                             System.out.println("Products loaded: " + productsList.size());
 
                         } else if ("comandsData".equals(type)) {
-                            
-                            System.out.println(message);
 
                             JSONArray comandsArray = obj.getJSONArray("list");
+
+                            System.out.println(comandsArray.toString());
 
                             for (int i = 0; i < comandsArray.length(); i++) {
                                 JSONObject comandObject = comandsArray.getJSONObject(i);
                                 
                                 Comanda comanda = new Comanda(comandObject.getInt("number"), comandObject.getInt("clientsNumber"));
 
-                                // Obtener la lista de productos de cada comanda
                                 JSONArray productsArray = comandObject.getJSONArray("productsList");
                                 List<Product> productsList = new ArrayList<>();
 
                                 for (int j = 0; j < productsArray.length(); j++) {
                                     JSONObject productObject = productsArray.getJSONObject(j);
-                                    
-                                    // Crear nueva instancia de Product
+                                
                                     Product product = new Product(productObject.getString("nombre"), productObject.getString("preu"));
-                                    
+                                
+                                    List<String> tags = new ArrayList<>();
+                                    JSONArray tagsArray = productObject.getJSONArray("tags");
+                                
+                                    for (int e = 0; e < tagsArray.length(); e++) {
+                                        tags.add(tagsArray.getString(e));
+                                    }
+                                
+                                    product.addTags(tags);
                                     productsList.add(product);
-                                }
+                                }                                
 
                                 // Asignar la lista de productos a la comanda
                                 comanda.addProducts(productsList);
                                 
                                 comands.add(comanda);
                             }
+                            printearComandas();
                         }
                     }
                 }
@@ -228,6 +235,12 @@ public class Main extends Application {
             clienteWebSocket.connect();
         } catch (URISyntaxException e) {
             System.out.println("URI no válida: " + e.getMessage());
+        }
+    }
+
+    private static void printearComandas() {
+        for (Comanda comanda : comands) {
+            System.out.println(comanda);
         }
     }
 }

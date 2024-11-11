@@ -54,6 +54,21 @@ public class Main extends WebSocketServer {
         clients.add(new ClientFX("Admin", "1", "1", null, null));
         clients.add(new ClientFX("Responsable", "2", "2", null, null));
         clients.add(new ClientFX("Cliente", "3", "3", null, null));
+
+        Comanda comanda1 = new Comanda(2, 3);
+        List<Product> products1 = new ArrayList<>();
+
+        Product product1 = new Product("cerveza", "15");
+        List<String> tags1 = new ArrayList<>();
+        tags1.add("bebida");
+        tags1.add("fría");
+        product1.addTags(tags1);
+
+        products1.add(product1);
+
+        comanda1.addProducts(products1);
+        comands.add(comanda1);
+
     }
 
     @Override
@@ -288,6 +303,12 @@ public class Main extends WebSocketServer {
                         JSONObject productObject = new JSONObject();
                         productObject.put("nombre", product.getNombre());
                         productObject.put("preu", product.getPreu());
+                        JSONArray productTags = new JSONArray();
+                        for (String tag : product.getTags()) {
+                            productTags.put(tag);
+                        }
+                        productObject.put("tags", productTags);
+
                         productsList.put(productObject);
                     }
                 }
@@ -305,5 +326,4 @@ public class Main extends WebSocketServer {
         
         return response.toString();
     }
-    
 }

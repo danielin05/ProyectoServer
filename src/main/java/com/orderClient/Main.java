@@ -28,6 +28,8 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         establecerConexion("3000", "localhost", "ws://");
+
+        comands = new ArrayList<>();
         
         // Carga la vista inicial desde el archivo FXML
         Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_kitchenClient.fxml"));
@@ -91,9 +93,9 @@ public class Main extends Application {
 
                         if ("comandsData".equals(type)) {
 
-                            System.out.println(message);
-
                             JSONArray comandsArray = obj.getJSONArray("list");
+
+                            System.out.println(comandsArray.toString());
 
                             for (int i = 0; i < comandsArray.length(); i++) {
                                 JSONObject comandObject = comandsArray.getJSONObject(i);
@@ -106,12 +108,20 @@ public class Main extends Application {
 
                                 for (int j = 0; j < productsArray.length(); j++) {
                                     JSONObject productObject = productsArray.getJSONObject(j);
-                                    
+                                
                                     // Crear nueva instancia de Product
                                     Product product = new Product(productObject.getString("nombre"), productObject.getString("preu"));
-                                    
+                                
+                                    List<String> tags = new ArrayList<>();
+                                    JSONArray tagsArray = productObject.getJSONArray("tags");
+                                
+                                    for (int e = 0; e < tagsArray.length(); e++) {
+                                        tags.add(tagsArray.getString(e));
+                                    }
+                                
+                                    product.addTags(tags);
                                     productsList.add(product);
-                                }
+                                }                                
 
                                 // Asignar la lista de productos a la comanda
                                 comanda.addProducts(productsList);
@@ -119,9 +129,8 @@ public class Main extends Application {
                                 comands.add(comanda);
                             }
 
-                            System.out.println(comands);
+                            printearComandas();
                         }
-                        
                     }
                 }
                 
@@ -140,6 +149,12 @@ public class Main extends Application {
             clienteWebSocket.connect();
         } catch (URISyntaxException e) {
             System.out.println("URI no válida: " + e.getMessage());
+        }
+    }
+
+    private static void printearComandas() {
+        for (Comanda comanda : comands) {
+            System.out.println(comanda);
         }
     }
 }

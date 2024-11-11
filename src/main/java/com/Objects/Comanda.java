@@ -10,7 +10,7 @@ public class Comanda {
     private List<Product> productsList;
 
     public Comanda(int number, int clientsNumber) {
-        this.number = number;
+         this.number = number;
         this.clientsNumber = clientsNumber;
         this.productsList = new ArrayList<>();
     }
@@ -39,5 +39,10 @@ public class Comanda {
         for (Product product : addProducts) {
             this.productsList.add(product);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "number: " + number + " clients: " + clientsNumber + " products: " + productsList.toString();
     }
 }
