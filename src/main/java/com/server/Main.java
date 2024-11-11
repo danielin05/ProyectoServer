@@ -12,6 +12,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.Objects.ClientFX;
+import com.Objects.Comanda;
+import com.Objects.Product;
 
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -32,6 +34,7 @@ public class Main extends WebSocketServer {
     private List<WebSocket> webSockets;
     private List<ClientFX> currentClients;
     private List<ClientFX> clients;
+    private List<Comanda> comands;
 
     private static JSONArray productList;
 
@@ -40,6 +43,7 @@ public class Main extends WebSocketServer {
         webSockets = new ArrayList<>();
         currentClients = new ArrayList<>();
         clients = new ArrayList<>();
+        comands = new ArrayList<>();
 
         productList = loadProducts();
 
@@ -61,6 +65,7 @@ public class Main extends WebSocketServer {
 
         conn.send(loadClientsData());
         sendProductsList(conn);
+        conn.send(loadComandsData());
         
     }
 
@@ -226,8 +231,6 @@ public class Main extends WebSocketServer {
         }
     }
 
-
-
     private static JSONArray loadProducts() {
         try {
 
@@ -268,5 +271,39 @@ public class Main extends WebSocketServer {
         } catch (Exception e) {
             return null;
         }        
-    }   
+    } 
+    
+    private String loadComandsData() {
+        JSONArray comandsJsonArray = new JSONArray();
+        
+        if (comands != null) {
+            for (Comanda comanda : comands) {
+                JSONObject comandObject = new JSONObject();
+                comandObject.put("number", comanda.getNumber());
+                comandObject.put("clientsNumber", comanda.getClientsNumber());
+    
+                JSONArray productsList = new JSONArray();
+                if (comanda.getProducts() != null) {
+                    for (Product product : comanda.getProducts()) {
+                        JSONObject productObject = new JSONObject();
+                        productObject.put("nombre", product.getNombre());
+                        productObject.put("preu", product.getPreu());
+                        productsList.put(productObject);
+                    }
+                }
+    
+                comandObject.put("productsList", productsList);
+                comandsJsonArray.put(comandObject);
+            }
+        }
+    
+        JSONObject response = new JSONObject();
+        response.put("type", "comandsData");
+        response.put("list", comandsJsonArray);
+    
+        System.out.println(response.toString());
+        
+        return response.toString();
+    }
+    
 }

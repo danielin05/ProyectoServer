@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.Objects.ClientFX;
+import com.Objects.Comanda;
 import com.Objects.Product;
 
 import javafx.application.Application;
@@ -33,6 +34,7 @@ public class Main extends Application {
     public static List<ClientFX> clients = new ArrayList<>();
     public static List<ClientFX> currentClients = new ArrayList<>();
     public static List<Product> productsList = new ArrayList<>();
+    private static List<Comanda> comands = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -119,6 +121,7 @@ public class Main extends Application {
                                 String contraseña = clientObj.getString("password");
                                 
                                 String lastAccesStr = clientObj.getString("lastAcces");
+                                
                                 Date lastAcces = null;
                             
                                 // Comprobar si la fecha es "No disponible" o un valor válido
@@ -176,6 +179,36 @@ public class Main extends Application {
                             }
 
                             System.out.println("Products loaded: " + productsList.size());
+
+                        } else if ("comandsData".equals(type)) {
+                            
+                            System.out.println(message);
+
+                            JSONArray comandsArray = obj.getJSONArray("list");
+
+                            for (int i = 0; i < comandsArray.length(); i++) {
+                                JSONObject comandObject = comandsArray.getJSONObject(i);
+                                
+                                Comanda comanda = new Comanda(comandObject.getInt("number"), comandObject.getInt("clientsNumber"));
+
+                                // Obtener la lista de productos de cada comanda
+                                JSONArray productsArray = comandObject.getJSONArray("productsList");
+                                List<Product> productsList = new ArrayList<>();
+
+                                for (int j = 0; j < productsArray.length(); j++) {
+                                    JSONObject productObject = productsArray.getJSONObject(j);
+                                    
+                                    // Crear nueva instancia de Product
+                                    Product product = new Product(productObject.getString("nombre"), productObject.getString("preu"));
+                                    
+                                    productsList.add(product);
+                                }
+
+                                // Asignar la lista de productos a la comanda
+                                comanda.addProducts(productsList);
+                                
+                                comands.add(comanda);
+                            }
                         }
                     }
                 }

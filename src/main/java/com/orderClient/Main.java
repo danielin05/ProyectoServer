@@ -2,9 +2,12 @@ package com.orderClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javafx.application.Application;
@@ -13,30 +16,28 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import com.Objects.Comanda;
+import com.Objects.Product;
 
 public class Main extends Application {
 
-    public static WebSocketClient clienteWebSocket;
+    private static WebSocketClient clienteWebSocket;
+    private static List<Comanda> comands;
 
     @Override
     public void start(Stage stage) throws Exception {
-        System.out.println(1);
+
+        establecerConexion("3000", "localhost", "ws://");
         
         // Carga la vista inicial desde el archivo FXML
         Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_kitchenClient.fxml"));
-        System.out.println(1);
         Scene scene = new Scene(root);
-        System.out.println(1);
 
         stage.setScene(scene);
-        System.out.println(1);
         stage.setResizable(false);
-        System.out.println(1);
         stage.setMaximized(true);
         stage.setTitle("Barretina");
-        System.out.println(1);
         stage.getIcons().add(new Image("/images/logo.png"));
-        System.out.println(1);
         stage.show();
 
         // Agrega un icono solo si no es un Mac
@@ -70,6 +71,8 @@ public class Main extends Application {
         }
 
         String uri = choiceConnect + ip + ":" + port;
+
+        System.out.println(uri);
         
         // Crear el cliente WebSocket
         try {
@@ -83,8 +86,41 @@ public class Main extends Application {
                 public void onMessage(String message) {
                     JSONObject obj = new JSONObject(message);
                     if (obj.has("type")) {
-                        String type = obj.getString("type");
                         
+                        String type = obj.getString("type");
+
+                        if ("comandsData".equals(type)) {
+
+                            System.out.println(message);
+
+                            JSONArray comandsArray = obj.getJSONArray("list");
+
+                            for (int i = 0; i < comandsArray.length(); i++) {
+                                JSONObject comandObject = comandsArray.getJSONObject(i);
+                                
+                                Comanda comanda = new Comanda(comandObject.getInt("number"), comandObject.getInt("clientsNumber"));
+
+                                // Obtener la lista de productos de cada comanda
+                                JSONArray productsArray = comandObject.getJSONArray("productsList");
+                                List<Product> productsList = new ArrayList<>();
+
+                                for (int j = 0; j < productsArray.length(); j++) {
+                                    JSONObject productObject = productsArray.getJSONObject(j);
+                                    
+                                    // Crear nueva instancia de Product
+                                    Product product = new Product(productObject.getString("nombre"), productObject.getString("preu"));
+                                    
+                                    productsList.add(product);
+                                }
+
+                                // Asignar la lista de productos a la comanda
+                                comanda.addProducts(productsList);
+                                
+                                comands.add(comanda);
+                            }
+
+                            System.out.println(comands);
+                        }
                         
                     }
                 }

@@ -8,22 +8,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.4" prefWidth="1550.4" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.4" prefWidth="1550.4" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orderClient.ControllerOrderClient">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
+            <Button fx:id="apagarButton" mnemonicParsing="false" onAction="#apagarButton" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Apagar">
                <HBox.margin>
                   <Insets left="10.0" right="10.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
+            <Button fx:id="configButton" mnemonicParsing="false" onAction="#configButton" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Configuración">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
+            <Button fx:id="deshacerButton" mnemonicParsing="false" onAction="#deshacerButton" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Deshacer">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -36,22 +35,22 @@
                <tabs>
                   <Tab text="Caliente">
                      <content>
-                        <Canvas height="200.0" width="200.0" />
+                        <Canvas fx:id="calienteCanvas" height="645.0" width="1540.0" />
                      </content>
                   </Tab>
                   <Tab text="Frio">
                      <content>
-                        <Canvas height="200.0" width="200.0" />
+                        <Canvas fx:id="frioCanvas" height="645.0" width="1540.0" />
                      </content>
                   </Tab>
                   <Tab text="Postres">
                      <content>
-                        <Canvas height="200.0" width="200.0" />
+                        <Canvas fx:id="postresCanvas" height="645.0" width="1540.0" />
                      </content>
                   </Tab>
                   <Tab text="General">
                      <content>
-                        <Canvas height="200.0" width="200.0" />
+                        <Canvas fx:id="generalCanvas" height="645.0" width="1540.0" />
                      </content>
                   </Tab>
                </tabs>
@@ -60,17 +59,16 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="60.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
+            <Button fx:id="atrasButton" mnemonicParsing="false" onAction="#atrasButton" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
+            <Button fx:id="delanteButton" mnemonicParsing="false" onAction="#delanteButton" prefHeight="50.0" prefWidth="50.0" stylesheets="@button3.css" text="Button">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
-         </children>
-      </HBox>
+         </children></HBox>
    </children>
 </VBox>

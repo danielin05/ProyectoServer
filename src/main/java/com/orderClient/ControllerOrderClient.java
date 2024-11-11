@@ -25,10 +25,16 @@ public class ControllerOrderClient {
     private Button apagarButton;
 
     @FXML
-    private Button configuraciónButton;
+    private Button configButton;
 
     @FXML
     private Button deshacerButton;
+
+    @FXML
+    private Button delanteButton;
+
+    @FXML
+    private Button atrasButton;
 
     @FXML
     private void apagarButton(ActionEvent event) {
@@ -37,7 +43,7 @@ public class ControllerOrderClient {
     }
 
     @FXML
-    private void configuraciónButton(ActionEvent event) {
+    private void configButton(ActionEvent event) {
         System.out.println("Se pulsó el botón configuración");
         // Lógica para el botón "entrar"
     }
@@ -48,7 +54,17 @@ public class ControllerOrderClient {
         // Lógica para el botón "entrar"
     }
 
+    @FXML
+    private void delanteButton(ActionEvent event) {
+        System.out.println("Se pulsó el botón deshacer");
+        // Lógica para el botón "entrar"
+    }
 
+    @FXML
+    private void atrasButton(ActionEvent event) {
+        System.out.println("Se pulsó el botón deshacer");
+        // Lógica para el botón "entrar"
+    }
 
     @FXML
     public void initialize() {

@@ -13,6 +13,11 @@ public class Product {
         this.imageURL = imageURL;
     }
 
+    public Product(String nombre, String preu) {
+        this.nombre = nombre;
+        this.preu = preu;
+    }
+
     // Getters
     public String getNombre() {
         return nombre;
