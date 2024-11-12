@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.JSONObject;
+
+import com.Objects.WarningPopup;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +42,19 @@ public class ControllerUserInfo implements Initializable {
     @FXML
     private void acceptButton(ActionEvent event) {
         System.out.println("Se pulsó el botón aceptar");
+        if (!passwordField.getText().trim().isEmpty()) {
+                
+            JSONObject message = new JSONObject();
+            message.put("type", "logInClient"); 
+            message.put("userID", ControllerCurrentClients.selectedUser.getId());
+            message.put("password", passwordField.getText());
+            message.put("rememberCheck", rememberCheck.isSelected());
+            Main.clienteWebSocket.send(message.toString());
+
+        } else {
+            System.out.println("Introduce la contraseña");
+            WarningPopup.showWarning("Contraseña inválida", "Debes introducir una contraseña válida");
+        }
     }
 
     // Acción para el botón cancelar
@@ -62,7 +79,18 @@ public class ControllerUserInfo implements Initializable {
         // Inicializa el ToggleButton con el estado adecuado
         updateToggleButtonIcon();
 
-        // Actualiza el icono cada vez que el estado del ToggleButton cambia
+        nameField.setText(ControllerCurrentClients.selectedUser.getNombre());
+        if (ControllerCurrentClients.selectedUser.getLastAcces() == null) {
+            lastDateField.setText("No data found");
+        } else {
+            lastDateField.setText(ControllerCurrentClients.selectedUser.getLastAcces().toString());
+        }
+
+        if (ControllerCurrentClients.selectedUser.getRememberPassword()) {
+            passwordField.setText(ControllerCurrentClients.selectedUser.getPassword());
+            rememberCheck.setSelected(true);
+        }
+
         rememberCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             updateToggleButtonIcon();
         });

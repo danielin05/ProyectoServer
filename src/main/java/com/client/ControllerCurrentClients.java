@@ -18,9 +18,13 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.json.JSONObject;
+
 import com.Objects.ClientFX;
+import com.Objects.LoginPopup;
 
 public class ControllerCurrentClients implements Initializable {
 
@@ -36,15 +40,20 @@ public class ControllerCurrentClients implements Initializable {
     @FXML
     private Button consuptionButton;
 
-    private static final int RECTANGLE_WIDTH = 135;  // Ancho del rectángulo
-    private static final int RECTANGLE_HEIGHT = 180;  // Altura del rectángulo
-    private static final int RECTANGLE_SPACING = 20;  // Espacio entre los rectángulos
-    private static final int CORNER_RADIUS = 15; // Radio de las esquinas redondeadas
+    private static final int RECTANGLE_WIDTH = 135;
+    private static final int RECTANGLE_HEIGHT = 180;
+    private static final int RECTANGLE_SPACING = 20;
+    private static final int CORNER_RADIUS = 15;
+    private final List<ClientFX> currentClients = Main.currentClients;
 
-    private final List<ClientFX> currentClients = Main.currentClients; // Lista de clientes
+    public static ClientFX selectedUser;
+
+    public static ControllerCurrentClients instance;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
+
         drawRectanglesOnCanvas();
         
         // Agregar un manejador de eventos para detectar clics
@@ -55,12 +64,30 @@ public class ControllerCurrentClients implements Initializable {
     private void enterButton(ActionEvent event) {
         System.out.println("Se pulsó el botón entrar");
         // Lógica para el botón "entrar"
+        Map<String, String> credentials = LoginPopup.showLoginPopup("Entrada","Introduce tus credenciales para inicio de sesión");
+
+        if (!(credentials.get("userID").isEmpty() && credentials.get("password").isEmpty())) {
+            JSONObject message = new JSONObject();
+            message.put("type", "enterClient"); 
+            message.put("userID", credentials.get("userID"));
+            message.put("password", credentials.get("password"));
+            Main.clienteWebSocket.send(message.toString());
+        }
     }
 
     @FXML
     private void exitButton(ActionEvent event) {
         System.out.println("Se pulsó el botón salir");
-        // Lógica para el botón "salir"
+        // Lógica para el botón salir
+        Map<String, String> credentials = LoginPopup.showLoginPopup("Salida","Introduce tus credenciales para cierre de sesión");
+
+        if (!(credentials.get("userID").isEmpty() && credentials.get("password").isEmpty())) {
+            JSONObject message = new JSONObject();
+            message.put("type", "exitClient"); 
+            message.put("userID", credentials.get("userID"));
+            message.put("password", credentials.get("password"));
+            Main.clienteWebSocket.send(message.toString());
+        }
     }
 
     @FXML
@@ -69,8 +96,10 @@ public class ControllerCurrentClients implements Initializable {
         // Lógica para el botón "entrar"
     }
 
-    private void drawRectanglesOnCanvas() {
+    public void drawRectanglesOnCanvas() {
         GraphicsContext gc = canvasCurrentUsers.getGraphicsContext2D();
+
+        gc.clearRect(0, 0, canvasCurrentUsers.getWidth(), canvasCurrentUsers.getHeight());
         
         // Configura una sombra para los rectángulos (solo para el rectángulo grande)
         DropShadow shadow = new DropShadow();
@@ -153,6 +182,8 @@ public class ControllerCurrentClients implements Initializable {
             System.out.println("ID: " + selectedClient.getId());
             System.out.println("Nombre: " + selectedClient.getNombre());
             System.out.println("Contraseña: " + selectedClient.getPassword());
+
+            selectedUser = selectedClient;
 
             openUserLayout();
         }

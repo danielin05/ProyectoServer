@@ -47,12 +47,6 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
-        System.out.println(productList);
-
-        currentClients.add(new ClientFX("Admin", "1", "1", null,null));
-        currentClients.add(new ClientFX("Responsable", "2", "2", null, null));
-        currentClients.add(new ClientFX("Cliente", "3", "3", null, null));
-
         clients.add(new ClientFX("Admin", "1", "1", null, null));
         clients.add(new ClientFX("Responsable", "2", "2", null, null));
         clients.add(new ClientFX("Cliente", "3", "3", null, null));
@@ -122,19 +116,88 @@ public class Main extends WebSocketServer {
                 case "addClient":
                     // Implementación para manejar el mensaje "addClient"
                     System.out.println("Mensaje recibido: addClient");
-                    //handleAddClient(clientId, obj);
+
                     break;
 
-                case "logInClient":
-                    // Implementación para manejar el mensaje "logInClient"
-                    System.out.println("Mensaje recibido: logInClient");
-                    //handleLogInClient(clientId, obj);
+                case "enterClient":
+                    System.out.println("Mensaje recibido: enterClient");
+                    
+                    ClientFX clienteEnter = getClientById(obj.getString("userID"));
+                    String passwordEnter = obj.getString("password");
+
+                    if (clienteEnter == null) {
+                        break;
+                    }
+
+                    if (!clienteEnter.getPassword().equals(passwordEnter)) {
+                        break;
+                    }
+
+                    if (currentClients.contains(clienteEnter)) {
+                        break;
+                    }
+
+                    currentClients.add(clienteEnter);
+
+                    broadcast(loadClientsData());
+
                     break;
 
                 case "exitClient":
                     // Implementación para manejar el mensaje "exitClient"
                     System.out.println("Mensaje recibido: exitClient");
-                    //handleExitClient(clientId);
+                    
+                    ClientFX clienteExit = getClientById(obj.getString("userID"));
+                    String passwordExit = obj.getString("password");
+
+                    if (clienteExit == null) {
+                        break;
+                    }
+
+                    if (!clienteExit.getPassword().equals(passwordExit)) {
+                        break;
+                    }
+
+                    if (!currentClients.contains(clienteExit)) {
+                        break;
+                    }
+
+                    currentClients.remove(clienteExit);
+
+                    broadcast(loadClientsData());
+
+                    break;
+                
+                case "logInClient":
+                
+                    System.out.println("Mensaje recibido: logInClient");
+
+                    ClientFX clientLogIn = getClientById(obj.getString("userID"));
+                    String passwordLogIn = obj.getString("password");
+                    boolean rememberCheck = obj.getBoolean("rememberCheck");
+
+                    if (clientLogIn == null) {
+                        break;
+                    }
+
+                    if (clientLogIn.getClienteWebSocket() != null) {
+                        break;
+                    }
+
+                    if (!clientLogIn.getPassword().equals(passwordLogIn)) {
+                        break;
+                    }
+
+                    if (rememberCheck) {
+                        clientLogIn.setRememberPassword(true);
+                    } else {
+                        clientLogIn.setRememberPassword(false);
+                    }
+
+                    broadcast(loadClientsData());
+
+
+
                     break;
 
                 default:
@@ -197,6 +260,8 @@ public class Main extends WebSocketServer {
             } else {
                 clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
             }
+
+            clientObj.put("rememberPassword", client.getRememberPassword());
     
             currentClientsList.put(clientObj);
         }
@@ -215,6 +280,8 @@ public class Main extends WebSocketServer {
             } else {
                 clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
             }
+
+            clientObj.put("rememberPassword", client.getRememberPassword());
     
             clientsList.put(clientObj);
         }
@@ -328,5 +395,14 @@ public class Main extends WebSocketServer {
         System.out.println(response.toString());
         
         return response.toString();
+    }
+
+    private ClientFX getClientById(String id) {
+        for (ClientFX clienteFX : clients) {
+            if (clienteFX.getId().trim().equals(id)) {
+                return clienteFX;
+            }
+        }
+        return null;
     }
 }

@@ -28,7 +28,7 @@ import java.util.Date;
 public class Main extends Application {
 
     public static WebSocketClient clienteWebSocket;
-    private static Stage stage;
+    public static Stage stage;
 
     // Listas para almacenar los datos de clientes y productos
     public static List<ClientFX> clients = new ArrayList<>();
@@ -107,9 +107,6 @@ public class Main extends Application {
                             clients.clear();
                             currentClients.clear();
 
-                            System.out.println("hola " + message);
-
-
                             // Parsear y cargar los clientes en las listas
                             JSONArray clientsArray = obj.getJSONArray("clients");
                             JSONArray currentClientsArray = obj.getJSONArray("currentClients");
@@ -121,6 +118,8 @@ public class Main extends Application {
                                 String contraseña = clientObj.getString("password");
                                 
                                 String lastAccesStr = clientObj.getString("lastAcces");
+
+                                boolean rememberPassword = clientObj.getBoolean("rememberPassword");
                                 
                                 Date lastAcces = null;
                             
@@ -133,8 +132,12 @@ public class Main extends Application {
                                         e.printStackTrace(); // Manejar la excepción si es necesario
                                     }
                                 }
+
+                                ClientFX newClientFX = new ClientFX(nombre, id, contraseña, lastAcces, null);
+
+                                newClientFX.setRememberPassword(rememberPassword);
                             
-                                clients.add(new ClientFX(nombre, id, contraseña, lastAcces, null));
+                                clients.add(newClientFX);
                             }
                             
                             for (int i = 0; i < currentClientsArray.length(); i++) {
@@ -144,6 +147,9 @@ public class Main extends Application {
                                 String contraseña = currentClientObj.getString("password");
                             
                                 String lastAccesStr = currentClientObj.getString("lastAcces");
+
+                                boolean rememberPassword = currentClientObj.getBoolean("rememberPassword");
+
                                 Date lastAcces = null;
                             
                                 // Comprobar si la fecha es "No disponible" o un valor válido
@@ -155,12 +161,20 @@ public class Main extends Application {
                                         e.printStackTrace(); // Manejar la excepción si es necesario
                                     }
                                 }
+
+                                ClientFX newClientFX = new ClientFX(nombre, id, contraseña, lastAcces, null);
+
+                                newClientFX.setRememberPassword(rememberPassword);
                             
-                                currentClients.add(new ClientFX(nombre, id, contraseña, lastAcces, null));
+                                currentClients.add(newClientFX);
                             }        
                                 
                             System.out.println("Clients loaded: " + clients.size());
                             System.out.println("Current clients loaded: " + currentClients.size());
+
+                            if (ControllerCurrentClients.instance != null) {
+                                ControllerCurrentClients.instance.drawRectanglesOnCanvas();
+                            }
 
                         } else if ("productsList".equals(type)) {
                             productsList.clear();
@@ -203,14 +217,14 @@ public class Main extends Application {
                             
                             System.out.println("Products loaded: " + productsList.size());
 
-                            System.out.println("--------bebidas--------");
+                            /*System.out.println("--------bebidas--------");
                             System.out.println(filterProductsByTag(productsList, "bebida"));
                             System.out.println("--------caliente--------");
                             System.out.println(filterProductsByTag(productsList, "caliente"));
                             System.out.println("--------frio--------");
                             System.out.println(filterProductsByTag(productsList, "frio"));
                             System.out.println("--------postre--------");
-                            System.out.println(filterProductsByTag(productsList, "postre"));
+                            System.out.println(filterProductsByTag(productsList, "postre"));*/
                             
 
                         } else if ("comandsData".equals(type)) {
