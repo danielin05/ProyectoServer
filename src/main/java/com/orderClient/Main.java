@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,26 +19,27 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import com.Objects.Comanda;
 import com.Objects.Product;
+import com.client.UtilsViews;
 
 public class Main extends Application {
 
     private static WebSocketClient clienteWebSocket;
     private static List<Comanda> comands;
+    public static Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        establecerConexion("3000", "localhost", "ws://");
-
         comands = new ArrayList<>();
+
+        Main.stage = stage;
         
         // Carga la vista inicial desde el archivo FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_kitchenClient.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/assets/layout_connect_Order.fxml"));
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setMaximized(true);
         stage.setTitle("Barretina");
         stage.getIcons().add(new Image("/images/logo.png"));
         stage.show();
@@ -82,6 +84,12 @@ public class Main extends Application {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     System.out.println("Conexión establecida con el servidor: " + uri);
+
+                    Platform.runLater(() -> {
+                        stage.hide();
+                        stage.setMaximized(true);
+                        UtilsViews.cambiarFrame(stage, "/assets/layout_kitchenClient.fxml");
+                    });
                 }
 
                 @Override

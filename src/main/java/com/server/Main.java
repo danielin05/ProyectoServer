@@ -196,8 +196,6 @@ public class Main extends WebSocketServer {
 
                     broadcast(loadClientsData());
 
-
-
                     break;
 
                 default:
