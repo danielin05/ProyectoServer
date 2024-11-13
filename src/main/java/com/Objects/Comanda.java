@@ -1,18 +1,26 @@
 package com.Objects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Comanda {
 
     private int number;
     private int clientsNumber;
-    private List<Product> productsList;
+    private List<CommandProduct> productsList;
+    private ClientFX clientFX;
+    private String estado;
 
-    public Comanda(int number, int clientsNumber) {
-         this.number = number;
+    private static final List<String> ESTADOS = List.of("pendiente", "listo", "pagado");
+
+    public Comanda(int number, int clientsNumber, ClientFX clientFX) {
+        this.number = number;
         this.clientsNumber = clientsNumber;
         this.productsList = new ArrayList<>();
+        this.clientFX = clientFX;
+        this.estado = ESTADOS.get(0);
     }
 
     public int getNumber() {
@@ -23,26 +31,33 @@ public class Comanda {
         return clientsNumber;
     }
 
-    public List<Product> getProducts() {
+    public List<CommandProduct> getProducts() {
         return productsList;
     }
 
-    public void setClientsNumber(int clientsNumber) {
-        this.clientsNumber = clientsNumber;
+    public ClientFX getClientFX() {
+        return clientFX;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public void addProducts(List<Product> addProducts) {
-        for (Product product : addProducts) {
-            this.productsList.add(product);
-        }
-    }
+        Map<Product, Integer> productCountMap = new HashMap<>();
 
-    @Override
-    public String toString() {
-        return "number: " + number + " clients: " + clientsNumber + " products: " + productsList.toString();
+        for (Product product : addProducts) {
+            productCountMap.put(product, productCountMap.getOrDefault(product, 0) + 1);
+        }
+
+        for (Map.Entry<Product, Integer> entry : productCountMap.entrySet()) {
+            Product product = entry.getKey();
+            int cantidadItems = entry.getValue();
+            productsList.add(new CommandProduct(product, cantidadItems));
+        }
     }
 }

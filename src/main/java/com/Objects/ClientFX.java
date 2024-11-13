@@ -42,4 +42,13 @@ public class ClientFX {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setClienteWebSocket(WebSocket clienteWebSocket) {
+        this.clienteWebSocket = clienteWebSocket;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

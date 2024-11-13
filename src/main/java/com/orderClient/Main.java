@@ -19,7 +19,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import com.Objects.Comanda;
 import com.Objects.Product;
-import com.client.UtilsViews;
+import com.Objects.UtilsViews;
 
 public class Main extends Application {
 

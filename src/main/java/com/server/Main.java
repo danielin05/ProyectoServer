@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 
 import com.Objects.ClientFX;
 import com.Objects.Comanda;
+import com.Objects.CommandProduct;
 import com.Objects.Product;
 
 import org.jline.reader.EndOfFileException;
@@ -47,23 +48,9 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
-        clients.add(new ClientFX("Admin", "1", "1", null, null));
-        clients.add(new ClientFX("Responsable", "2", "2", null, null));
-        clients.add(new ClientFX("Cliente", "3", "3", null, null));
-
-        Comanda comanda1 = new Comanda(2, 3);
-        List<Product> products1 = new ArrayList<>();
-
-        Product product1 = new Product("cerveza", "15");
-        List<String> tags1 = new ArrayList<>();
-        tags1.add("bebida");
-        tags1.add("fría");
-        product1.addTags(tags1);
-
-        products1.add(product1);
-
-        comanda1.addProducts(products1);
-        comands.add(comanda1);
+        clients.add(new ClientFX("Admin", "1", "1", null));
+        clients.add(new ClientFX("Responsable", "2", "2", null));
+        clients.add(new ClientFX("Cliente", "3", "3", null));
 
     }
 
@@ -113,12 +100,6 @@ public class Main extends WebSocketServer {
 
                     break;
 
-                case "addClient":
-                    // Implementación para manejar el mensaje "addClient"
-                    System.out.println("Mensaje recibido: addClient");
-
-                    break;
-
                 case "enterClient":
                     System.out.println("Mensaje recibido: enterClient");
                     
@@ -136,6 +117,8 @@ public class Main extends WebSocketServer {
                     if (currentClients.contains(clienteEnter)) {
                         break;
                     }
+
+                    clienteEnter.setClienteWebSocket(conn);
 
                     currentClients.add(clienteEnter);
 
@@ -163,36 +146,6 @@ public class Main extends WebSocketServer {
                     }
 
                     currentClients.remove(clienteExit);
-
-                    broadcast(loadClientsData());
-
-                    break;
-                
-                case "logInClient":
-                
-                    System.out.println("Mensaje recibido: logInClient");
-
-                    ClientFX clientLogIn = getClientById(obj.getString("userID"));
-                    String passwordLogIn = obj.getString("password");
-                    boolean rememberCheck = obj.getBoolean("rememberCheck");
-
-                    if (clientLogIn == null) {
-                        break;
-                    }
-
-                    if (clientLogIn.getClienteWebSocket() != null) {
-                        break;
-                    }
-
-                    if (!clientLogIn.getPassword().equals(passwordLogIn)) {
-                        break;
-                    }
-
-                    if (rememberCheck) {
-                        clientLogIn.setRememberPassword(true);
-                    } else {
-                        clientLogIn.setRememberPassword(false);
-                    }
 
                     broadcast(loadClientsData());
 
@@ -252,15 +205,6 @@ public class Main extends WebSocketServer {
             clientObj.put("id", client.getId());
             clientObj.put("password", client.getPassword());
     
-            // Verificar si lastAcces es null antes de llamar a toString
-            if (client.getLastAcces() != null) {
-                clientObj.put("lastAcces", client.getLastAcces().toString());
-            } else {
-                clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
-            }
-
-            clientObj.put("rememberPassword", client.getRememberPassword());
-    
             currentClientsList.put(clientObj);
         }
     
@@ -271,15 +215,6 @@ public class Main extends WebSocketServer {
             clientObj.put("nombre", client.getNombre());
             clientObj.put("id", client.getId());
             clientObj.put("password", client.getPassword());
-    
-            // Verificar si lastAcces es null antes de llamar a toString
-            if (client.getLastAcces() != null) {
-                clientObj.put("lastAcces", client.getLastAcces().toString());
-            } else {
-                clientObj.put("lastAcces", "No disponible");  // O cualquier otro valor representativo
-            }
-
-            clientObj.put("rememberPassword", client.getRememberPassword());
     
             clientsList.put(clientObj);
         }
@@ -367,15 +302,18 @@ public class Main extends WebSocketServer {
     
                 JSONArray productsList = new JSONArray();
                 if (comanda.getProducts() != null) {
-                    for (Product product : comanda.getProducts()) {
+                    for (CommandProduct commandProduct : comanda.getProducts()) {
                         JSONObject productObject = new JSONObject();
-                        productObject.put("nombre", product.getNombre());
-                        productObject.put("preu", product.getPreu());
+                        productObject.put("nombre", commandProduct.getProducte().getNombre());
+                        productObject.put("preu", commandProduct.getProducte().getPreu());
+                        productObject.put("description", commandProduct.getProducte().getDescription());
                         JSONArray productTags = new JSONArray();
-                        for (String tag : product.getTags()) {
+                        for (String tag : commandProduct.getProducte().getTags()) {
                             productTags.put(tag);
                         }
                         productObject.put("tags", productTags);
+                        productObject.put("cantidad", commandProduct.getCantidad());
+                        productObject.put("estado", commandProduct.getEstado());
 
                         productsList.put(productObject);
                     }
