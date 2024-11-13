@@ -1,26 +1,26 @@
 /* Botón con radio y fondo atractivo */
 .button {
-    -fx-background-color: #34d399;
+    -fx-background-color: #D9CAC1;
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;  /* Radio de fondo */
     -fx-padding: 8px 12px;
-    -fx-border-color: #059669;
+    -fx-border-color: #26170f;
     -fx-border-width: 2px;
     -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2), 4, 0, 0, 2 );
 }
 
 /* Hover State */
 .button:hover {
-    -fx-background-color: #10b981;
+    -fx-background-color: #a69286;
     -fx-background-radius: 10px;  /* Asegura que el radio se aplique también en el hover */
 }
 
 /* Pressed State */
 .button:pressed {
-    -fx-background-color: #047857;
+    -fx-background-color: #766a63;
     -fx-background-radius: 10px;  /* Radio para el estado presionado */
 }
 

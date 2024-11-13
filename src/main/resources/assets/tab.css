@@ -13,7 +13,7 @@
 }
 
 .tab-pane .tab-header-area {
-    -fx-background-color: #e5e7eb;
+    -fx-background-color: #a67360;
     -fx-padding: 5px 10px;
     -fx-border-radius: 8px 8px 0 0;
 }
@@ -25,13 +25,13 @@
 }
 
 .tab:selected {
-    -fx-background-color: #34d399; /* Green color for selected tab */
+    -fx-background-color: #a69286; /* Green color for selected tab */
     -fx-text-fill: white;
     -fx-border-radius: 8px 8px 0 0;
 }
 
 .tab-label {
-    -fx-text-fill: #4b5563; /* Dark gray text */
+    -fx-text-fill: #26170f; /* Dark gray text */
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }

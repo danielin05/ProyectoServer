@@ -40,6 +40,7 @@ public class ControllerOrderClient {
     private void apagarButton(ActionEvent event) {
         System.out.println("Se pulsó el botón apagar");
         // Lógica para el botón "entrar"
+        Main.stage.close();
     }
 
     @FXML
@@ -47,7 +48,7 @@ public class ControllerOrderClient {
         System.out.println("Se pulsó el botón configuración");
         // Lógica para el botón "entrar"
     }
-
+    
     @FXML
     private void deshacerButton(ActionEvent event) {
         System.out.println("Se pulsó el botón deshacer");
