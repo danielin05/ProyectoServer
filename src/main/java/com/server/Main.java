@@ -71,10 +71,10 @@ public class Main extends WebSocketServer {
         commandProduct3.setComentario("Add grilled chicken");
 
         Comanda comanda1 = new Comanda(1, 2, client1);
-        comanda1.addProducts(List.of(commandProduct1, commandProduct2));
+        comanda1.addProducts(List.of(commandProduct1, commandProduct2, commandProduct1, commandProduct1, commandProduct2, commandProduct3));
 
         Comanda comanda2 = new Comanda(2, 1, client2);
-        comanda2.addProducts(List.of(commandProduct3));
+        comanda2.addProducts(List.of(commandProduct3, commandProduct3, commandProduct3, commandProduct1));
 
         comands.add(comanda1);
         comands.add(comanda2);

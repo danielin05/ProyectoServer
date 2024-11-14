@@ -172,7 +172,7 @@ public class Main extends Application {
 
     private static void printearComandas() {
         for (Comanda comanda : comands) {
-            System.out.println(comanda);
+            System.out.println(comanda.getCommandInfo());
         }
     }
 }

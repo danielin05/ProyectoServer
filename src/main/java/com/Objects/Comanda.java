@@ -1,7 +1,9 @@
 package com.Objects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 public class Comanda {
 
     private int number;
@@ -49,4 +51,15 @@ public class Comanda {
             productsList.add(product);
         }
     }
-}
+
+    public Map<String, Integer> getCommandInfo() {
+        Map<String, Integer> info = new HashMap<>();
+        for (CommandProduct commandProduct : productsList) {
+            Product product = commandProduct.getProducte();
+            String nombreProducto = product.getNombre();
+            
+            info.put(nombreProducto, info.getOrDefault(nombreProducto, 0) + 1);
+        }
+        return info;
+    }    
+}    
