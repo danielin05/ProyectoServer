@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 
 public class ControllerOrderClient {
 
-    
     @FXML
     private Canvas calienteCanvas;
     
@@ -73,6 +72,7 @@ public class ControllerOrderClient {
         drawOnCanvas(frioCanvas, "Preparar Frío");
         drawOnCanvas(postresCanvas, "Preparar Postres");
         drawOnCanvas(generalCanvas, "Vista General");
+        
     }
 
     private void drawOnCanvas(Canvas canvas, String text) {

@@ -3,7 +3,9 @@ package com.orderClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -25,13 +27,13 @@ import com.Objects.UtilsViews;
 public class Main extends Application {
 
     private static WebSocketClient clienteWebSocket;
-    private static List<Comanda> comands;
+    public static Map<String,List<Comanda>> comandsByTag;
     public static Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        comands = new ArrayList<>();
+        comandsByTag = new HashMap<>();
 
         Main.stage = stage;
         
@@ -104,7 +106,8 @@ public class Main extends Application {
                     
                             JSONArray comandsArray = obj.getJSONArray("list");
                             System.out.println(comandsArray.toString());
-                    
+                            List<Comanda> comands = new ArrayList<>();
+                            
                             for (int i = 0; i < comandsArray.length(); i++) {
                                 JSONObject comandObject = comandsArray.getJSONObject(i);
                     
@@ -146,8 +149,15 @@ public class Main extends Application {
                                 comanda.addProducts(productsList);
                     
                                 comands.add(comanda);
+
                             }
-                            printearComandas();
+
+                            comandsByTag.put("general", comands);
+                            comandsByTag.put("italian", orderCommandsByTag(comands, "Italian"));
+                            comandsByTag.put("vegetarian", orderCommandsByTag(comands, "Vegetarian"));
+                            comandsByTag.put("pasta", orderCommandsByTag(comands, "Pasta"));
+
+                            System.out.println(comandsByTag);
                         }
                     }                    
                 }
@@ -170,9 +180,27 @@ public class Main extends Application {
         }
     }
 
-    private static void printearComandas() {
-        for (Comanda comanda : comands) {
-            System.out.println(comanda.getCommandInfo());
+    private static List<Comanda> orderCommandsByTag(List<Comanda> comands, String tag) {
+        List<Comanda> commandsByTag = new ArrayList<>();
+        if (!comands.isEmpty()) {
+            for (Comanda comanda : comands) {  
+                Comanda commandByTag = new Comanda(comanda.getNumber(), comanda.getClientsNumber(), comanda.getClientFX());
+                List<CommandProduct> newProductsByTag = new ArrayList<>();
+                for (CommandProduct commandProduct : comanda.getProducts()) {
+                    if (commandProduct.getProducte().getTags().contains(tag)) {
+                        newProductsByTag.add(commandProduct);
+                    }
+                }
+                if (!newProductsByTag.isEmpty()) {
+                    commandByTag.addProducts(newProductsByTag);
+                    commandsByTag.add(commandByTag);
+                }
+            }
+            if (!commandsByTag.isEmpty()) {
+                return commandsByTag;
+            } 
+            return null;
         }
+        return null;
     }
 }
