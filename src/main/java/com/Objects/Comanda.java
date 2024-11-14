@@ -1,10 +1,7 @@
 package com.Objects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 public class Comanda {
 
     private int number;
@@ -47,17 +44,9 @@ public class Comanda {
         this.estado = estado;
     }
 
-    public void addProducts(List<Product> addProducts) {
-        Map<Product, Integer> productCountMap = new HashMap<>();
-
-        for (Product product : addProducts) {
-            productCountMap.put(product, productCountMap.getOrDefault(product, 0) + 1);
-        }
-
-        for (Map.Entry<Product, Integer> entry : productCountMap.entrySet()) {
-            Product product = entry.getKey();
-            int cantidadItems = entry.getValue();
-            productsList.add(new CommandProduct(product, cantidadItems));
+    public void addProducts(List<CommandProduct> addCommandProducts) {
+        for (CommandProduct product : addCommandProducts) {
+            productsList.add(product);
         }
     }
 }

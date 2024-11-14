@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import com.Objects.Comanda;
+import com.Objects.CommandProduct;
 import com.Objects.Product;
 import com.Objects.UtilsViews;
 
@@ -96,50 +97,59 @@ public class Main extends Application {
                 public void onMessage(String message) {
                     JSONObject obj = new JSONObject(message);
                     if (obj.has("type")) {
-                        
+    
                         String type = obj.getString("type");
-
+                    
                         if ("comandsData".equals(type)) {
-
+                    
                             JSONArray comandsArray = obj.getJSONArray("list");
-
                             System.out.println(comandsArray.toString());
-
+                    
                             for (int i = 0; i < comandsArray.length(); i++) {
                                 JSONObject comandObject = comandsArray.getJSONObject(i);
+                    
+                                int number = comandObject.getInt("number");
+                                int clientsNumber = comandObject.getInt("clientsNumber");
                                 
-                                Comanda comanda = new Comanda(comandObject.getInt("number"), comandObject.getInt("clientsNumber"));
-
-                                // Obtener la lista de productos de cada comanda
+                                Comanda comanda = new Comanda(number, clientsNumber, null); 
+                    
                                 JSONArray productsArray = comandObject.getJSONArray("productsList");
-                                List<Product> productsList = new ArrayList<>();
-
+                                List<CommandProduct> productsList = new ArrayList<>();
+                    
                                 for (int j = 0; j < productsArray.length(); j++) {
                                     JSONObject productObject = productsArray.getJSONObject(j);
-                                
-                                    // Crear nueva instancia de Product
-                                    Product product = new Product(productObject.getString("nombre"), productObject.getString("preu"));
-                                
+                    
+                                    Product product = new Product(
+                                        productObject.getString("nombre"), 
+                                        productObject.getString("preu")
+                                    );
+                                    product.setDescription(productObject.optString("description", ""));
+                    
                                     List<String> tags = new ArrayList<>();
-                                    JSONArray tagsArray = productObject.getJSONArray("tags");
-                                
-                                    for (int e = 0; e < tagsArray.length(); e++) {
-                                        tags.add(tagsArray.getString(e));
+                                    JSONArray tagsArray = productObject.optJSONArray("tags");
+                                    if (tagsArray != null) {
+                                        for (int e = 0; e < tagsArray.length(); e++) {
+                                            tags.add(tagsArray.getString(e));
+                                        }
                                     }
-                                
                                     product.addTags(tags);
-                                    productsList.add(product);
-                                }                                
 
-                                // Asignar la lista de productos a la comanda
+                                    String estado = productObject.optString("estado", "pendiente");
+                    
+                                    CommandProduct commandProduct = new CommandProduct(product);
+                                    commandProduct.setEstado(estado); 
+                                    commandProduct.setComentario(productObject.optString("comentario", ""));
+                                    
+                                    productsList.add(commandProduct);
+                                }
+                    
                                 comanda.addProducts(productsList);
-                                
+                    
                                 comands.add(comanda);
                             }
-
                             printearComandas();
                         }
-                    }
+                    }                    
                 }
                 
                 @Override

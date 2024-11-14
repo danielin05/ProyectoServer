@@ -48,6 +48,37 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
+        ClientFX client1 = new ClientFX("Alice", "001", "password123", null);
+        ClientFX client2 = new ClientFX("Bob", "002", "password456", null);
+
+        Product product1 = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "imageURL1");
+        product1.addTags(List.of("Italian", "Vegetarian"));
+        Product product2 = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "imageURL2");
+        product2.addTags(List.of("Italian", "Pasta"));
+        Product product3 = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "imageURL3");
+        product3.addTags(List.of("Salad", "Vegetarian"));
+
+        CommandProduct commandProduct1 = new CommandProduct(product1);
+        commandProduct1.setEstado("listo");
+        commandProduct1.setComentario("Extra cheese");
+
+        CommandProduct commandProduct2 = new CommandProduct(product2);
+        commandProduct2.setEstado("pendiente");
+        commandProduct2.setComentario("No bacon");
+
+        CommandProduct commandProduct3 = new CommandProduct(product3);
+        commandProduct3.setEstado("pagado");
+        commandProduct3.setComentario("Add grilled chicken");
+
+        Comanda comanda1 = new Comanda(1, 2, client1);
+        comanda1.addProducts(List.of(commandProduct1, commandProduct2));
+
+        Comanda comanda2 = new Comanda(2, 1, client2);
+        comanda2.addProducts(List.of(commandProduct3));
+
+        comands.add(comanda1);
+        comands.add(comanda2);
+
         clients.add(new ClientFX("Admin", "1", "1", null));
         clients.add(new ClientFX("Responsable", "2", "2", null));
         clients.add(new ClientFX("Cliente", "3", "3", null));
@@ -63,7 +94,7 @@ public class Main extends WebSocketServer {
 
         conn.send(loadClientsData());
         sendProductsList(conn);
-        conn.send(loadComandsData());
+        conn.send(loadCommandsData());
         
     }
 
@@ -96,7 +127,7 @@ public class Main extends WebSocketServer {
 
                     conn.send(loadClientsData());
                     sendProductsList(conn);
-                    conn.send(loadComandsData());
+                    conn.send(loadCommandsData());
 
                     break;
 
@@ -291,7 +322,7 @@ public class Main extends WebSocketServer {
         }        
     } 
     
-    private String loadComandsData() {
+    private String loadCommandsData() {
         JSONArray comandsJsonArray = new JSONArray();
         
         if (comands != null) {
@@ -306,20 +337,38 @@ public class Main extends WebSocketServer {
                         JSONObject productObject = new JSONObject();
                         productObject.put("nombre", commandProduct.getProducte().getNombre());
                         productObject.put("preu", commandProduct.getProducte().getPreu());
-                        productObject.put("description", commandProduct.getProducte().getDescription());
+                        
+                        // Verificación para evitar valores nulos
+                        String description = commandProduct.getProducte().getDescription();
+                        productObject.put("description", description != null ? description : "");
+    
                         JSONArray productTags = new JSONArray();
-                        for (String tag : commandProduct.getProducte().getTags()) {
-                            productTags.put(tag);
+                        List<String> tags = commandProduct.getProducte().getTags();
+                        if (tags != null) {
+                            for (String tag : tags) {
+                                productTags.put(tag);
+                            }
                         }
                         productObject.put("tags", productTags);
-                        productObject.put("cantidad", commandProduct.getCantidad());
                         productObject.put("estado", commandProduct.getEstado());
-
+    
+                        // Verificación para comentario nulo
+                        String comentario = commandProduct.getComentario();
+                        productObject.put("comentario", comentario != null ? comentario : "");
+    
                         productsList.put(productObject);
                     }
                 }
     
                 comandObject.put("productsList", productsList);
+    
+                JSONObject clientInfo = new JSONObject();
+                clientInfo.put("nombre", comanda.getClientFX().getNombre());
+                clientInfo.put("clientId", comanda.getClientFX().getId());
+    
+                comandObject.put("clientInfo", clientInfo);
+                comandObject.put("estado", comanda.getEstado());
+    
                 comandsJsonArray.put(comandObject);
             }
         }
@@ -330,8 +379,9 @@ public class Main extends WebSocketServer {
     
         System.out.println(response.toString());
         
-        return response.toString();
+        return response.toString();  
     }
+    
 
     private ClientFX getClientById(String id) {
         for (ClientFX clienteFX : clients) {
