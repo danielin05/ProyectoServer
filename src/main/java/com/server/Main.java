@@ -309,6 +309,7 @@ public class Main extends WebSocketServer {
                     product.put("nom", elemento.getElementsByTagName("nom").item(0).getTextContent());
                     product.put("preu", elemento.getElementsByTagName("preu").item(0).getTextContent());
                     product.put("descripcio", elemento.getElementsByTagName("descripcio").item(0).getTextContent());
+                    System.out.println(System.getProperty("user.dir") + elemento.getElementsByTagName("imatge").item(0).getTextContent());
                     product.put("imatge", elemento.getElementsByTagName("imatge").item(0).getTextContent());
 
                     productList.put(product);

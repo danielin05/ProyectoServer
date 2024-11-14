@@ -6,14 +6,14 @@ public class Product {
     private String nombre;
     private String preu;
     private String description;
-    private String imageURL;
+    private String imageBase64;
     private List<String> tags;
 
-    public Product(String nombre, String preu, String description, String imageURL) {
+    public Product(String nombre, String preu, String description, String imageBase64) {
         this.nombre = nombre;
         this.preu = preu;
         this.description = description;
-        this.imageURL = imageURL;
+        this.imageBase64 = imageBase64;
         this.tags = new ArrayList<>();
     }
 
@@ -36,8 +36,8 @@ public class Product {
         return description;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImageBase64() {
+        return imageBase64;
     }
 
     public List<String> getTags() {
@@ -57,8 +57,8 @@ public class Product {
         this.description = description;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     @Override

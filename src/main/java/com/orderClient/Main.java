@@ -107,7 +107,7 @@ public class Main extends Application {
                             JSONArray comandsArray = obj.getJSONArray("list");
                             System.out.println(comandsArray.toString());
                             List<Comanda> comands = new ArrayList<>();
-                            
+
                             for (int i = 0; i < comandsArray.length(); i++) {
                                 JSONObject comandObject = comandsArray.getJSONObject(i);
                     
@@ -153,9 +153,9 @@ public class Main extends Application {
                             }
 
                             comandsByTag.put("general", comands);
-                            comandsByTag.put("italian", orderCommandsByTag(comands, "Italian"));
-                            comandsByTag.put("vegetarian", orderCommandsByTag(comands, "Vegetarian"));
-                            comandsByTag.put("pasta", orderCommandsByTag(comands, "Pasta"));
+                            comandsByTag.put("caliente", orderCommandsByTag(comands, "caliente"));
+                            comandsByTag.put("frio", orderCommandsByTag(comands, "frio"));
+                            comandsByTag.put("postre", orderCommandsByTag(comands, "postre"));
 
                             System.out.println(comandsByTag);
                         }
