@@ -15,6 +15,7 @@ import com.Objects.ClientFX;
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
+import com.Objects.base64Transform;
 
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -309,8 +310,10 @@ public class Main extends WebSocketServer {
                     product.put("nom", elemento.getElementsByTagName("nom").item(0).getTextContent());
                     product.put("preu", elemento.getElementsByTagName("preu").item(0).getTextContent());
                     product.put("descripcio", elemento.getElementsByTagName("descripcio").item(0).getTextContent());
-                    System.out.println(System.getProperty("user.dir") + elemento.getElementsByTagName("imatge").item(0).getTextContent());
-                    product.put("imatge", elemento.getElementsByTagName("imatge").item(0).getTextContent());
+                    String imageURL = System.getProperty("user.dir") + "\\src\\main\\resources\\productImages\\" + elemento.getElementsByTagName("imatge").item(0).getTextContent();
+                    String base64ImageString = base64Transform.convertImageToBase64(imageURL);
+                    base64Transform.convertirBase64ToImage(base64ImageString, elemento.getElementsByTagName("imatge").item(0).getTextContent(), "src\\main\\resources\\producImagesDecoded");
+                    product.put("imatge", base64ImageString);
 
                     productList.put(product);
                 }
