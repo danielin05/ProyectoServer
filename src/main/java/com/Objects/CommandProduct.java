@@ -35,4 +35,9 @@ public class CommandProduct {
     public void setComentario(String comentario) {
         this.comentario = comentario;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

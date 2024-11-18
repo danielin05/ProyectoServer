@@ -15,6 +15,12 @@ public class ClientFX {
         this.clienteWebSocket = clienteWebSocket;
     }
 
+    public ClientFX(String nombre, String id, String password) {
+        this.nombre = nombre;
+        this.id = id;
+        this.password = password;
+    }
+
     public String getNombre() {
         return nombre;
     }

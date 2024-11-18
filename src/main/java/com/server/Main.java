@@ -59,6 +59,7 @@ public class Main extends WebSocketServer {
         Product product3 = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "imageURL3");
         product3.addTags(List.of("Salad", "Vegetarian"));
 
+        // Crear los productos para las comandas
         CommandProduct commandProduct1 = new CommandProduct(product1);
         commandProduct1.setEstado("listo");
         commandProduct1.setComentario("Extra cheese");
@@ -68,9 +69,10 @@ public class Main extends WebSocketServer {
         commandProduct2.setComentario("No bacon");
 
         CommandProduct commandProduct3 = new CommandProduct(product3);
-        commandProduct3.setEstado("pagado");
+        commandProduct3.setEstado("pendiente");
         commandProduct3.setComentario("Add grilled chicken");
 
+        // Crear las comandas
         Comanda comanda1 = new Comanda(1, 2, client1);
         comanda1.addProducts(List.of(commandProduct1, commandProduct2, commandProduct1, commandProduct1, commandProduct2, commandProduct3));
 
@@ -182,6 +184,71 @@ public class Main extends WebSocketServer {
                     broadcast(loadClientsData());
 
                     break;
+
+                case "command_done":
+                    int numTable = obj.getInt("table");
+                    
+                    for (Comanda comanda : comands) {
+                        if (comanda.getNumber() == numTable) {
+                            for (CommandProduct commandProduct : comanda.getProducts()) {
+                                commandProduct.setEstado("listo");
+                            }
+                            comanda.setEstado("listo");
+                            System.out.println("Se cambió el estado de la comanda " + numTable  + " a 'listo'");
+
+                            broadcast(loadCommandsData());
+
+                            break;
+                        }
+                    }
+
+                    break;
+
+                    case "product_done":
+                        System.out.println(message.toString());
+
+                        // Obtener datos del mensaje
+                        int numTableProductDone = obj.getInt("table");
+                        String commandProductName = obj.getString("product");
+
+                        boolean comandaFound = false;
+
+                        for (Comanda comanda : comands) {
+                            // Buscar la comanda correspondiente por número de mesa
+                            if (comanda.getNumber() == numTableProductDone) {
+                                comandaFound = true;
+                                boolean productFound = false;
+
+                                // Iterar solo sobre los productos de esta comanda
+                                System.out.println(comanda);
+                                for (CommandProduct commandProduct : comanda.getProducts()) {
+                                    // Cambiar el estado del primer producto pendiente especificado a "listo"
+                                    if (commandProduct.getProducte().getNombre().equals(commandProductName) && commandProduct.getEstado().equals("pendiente")) {
+                                        commandProduct.setEstado("listo");
+                                        productFound = true;
+
+                                        System.out.println("Se cambió el producto '" + commandProductName + "' de la comanda " + numTableProductDone + " a 'listo'");
+                                        break; // Salir del bucle después de cambiar el primer producto
+                                    }
+                                }
+                                System.out.println(comanda);
+
+                                if (!productFound) {
+                                    System.err.println("Producto no encontrado o ya estaba listo en la comanda " + numTableProductDone);
+                                }
+
+                                // Actualizar a todos los clientes después de modificar la comanda
+                                broadcast(loadCommandsData());
+                                break; // Salir del bucle principal una vez que se procesó la comanda correspondiente
+                            }
+                        }
+
+                        // Manejar el caso en que la comanda no se encontró
+                        if (!comandaFound) {
+                            System.err.println("Comanda no encontrada para la mesa " + numTableProductDone);
+                        }
+
+                        break;
 
                 default:
                     System.out.println("Mensaje no reconocido: " + type);
@@ -367,8 +434,11 @@ public class Main extends WebSocketServer {
                 comandObject.put("productsList", productsList);
     
                 JSONObject clientInfo = new JSONObject();
+
                 clientInfo.put("nombre", comanda.getClientFX().getNombre());
                 clientInfo.put("clientId", comanda.getClientFX().getId());
+                clientInfo.put("password", comanda.getClientFX().getPassword());
+                clientInfo.put("clientWebsocket", comanda.getClientFX().getClienteWebSocket());
     
                 comandObject.put("clientInfo", clientInfo);
                 comandObject.put("estado", comanda.getEstado());
@@ -380,8 +450,6 @@ public class Main extends WebSocketServer {
         JSONObject response = new JSONObject();
         response.put("type", "comandsData");
         response.put("list", comandsJsonArray);
-    
-        System.out.println(response.toString());
         
         return response.toString();  
     }

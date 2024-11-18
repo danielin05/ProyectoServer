@@ -19,6 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import com.Objects.ClientFX;
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
@@ -26,7 +28,7 @@ import com.Objects.UtilsViews;
 
 public class Main extends Application {
 
-    private static WebSocketClient clienteWebSocket;
+    public static WebSocketClient clienteWebSocket;
     public static Map<String,List<Comanda>> comandsByTag;
     public static Stage stage;
 
@@ -113,8 +115,16 @@ public class Main extends Application {
                     
                                 int number = comandObject.getInt("number");
                                 int clientsNumber = comandObject.getInt("clientsNumber");
+
+                                JSONObject clientInfo = comandObject.getJSONObject("clientInfo");
                                 
-                                Comanda comanda = new Comanda(number, clientsNumber, null); 
+                                ClientFX clientFX = new ClientFX(
+                                    clientInfo.getString("nombre"),  // nombre del cliente
+                                    clientInfo.getString("clientId"),  // clientId
+                                    clientInfo.getString("password")  // password
+                                );
+                                
+                                Comanda comanda = new Comanda(number, clientsNumber, clientFX); 
                     
                                 JSONArray productsArray = comandObject.getJSONArray("productsList");
                                 List<CommandProduct> productsList = new ArrayList<>();

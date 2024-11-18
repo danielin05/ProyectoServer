@@ -1,8 +1,11 @@
 package com.orderClient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONObject;
 
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
@@ -13,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 
 public class ControllerOrderClient {
 
@@ -42,6 +46,8 @@ public class ControllerOrderClient {
 
     @FXML
     private Button atrasButton;
+
+    private Map<Canvas, List<CommandArea>> commandAreasByCanvas = new HashMap<>();
 
     @FXML
     private void apagarButton(ActionEvent event) {
@@ -73,26 +79,24 @@ public class ControllerOrderClient {
     public void initialize() {
         startDrawingAnimation();
 
-        // Detecta el clic en cualquier canvas
-        calienteCanvas.setOnMouseClicked(event -> handleCanvasClick(event, calienteCanvas, Main.comandsByTag.get("caliente")));
-        frioCanvas.setOnMouseClicked(event -> handleCanvasClick(event, frioCanvas, Main.comandsByTag.get("frio")));
-        postresCanvas.setOnMouseClicked(event -> handleCanvasClick(event, postresCanvas, Main.comandsByTag.get("postre")));
-        generalCanvas.setOnMouseClicked(event -> handleCanvasClick(event, generalCanvas, Main.comandsByTag.get("general")));
+        // Detecta clics en los canvas
+        calienteCanvas.setOnMouseClicked(event -> handleCanvasClick(event.getX(), event.getY(), calienteCanvas));
+        frioCanvas.setOnMouseClicked(event -> handleCanvasClick(event.getX(), event.getY(), frioCanvas));
+        postresCanvas.setOnMouseClicked(event -> handleCanvasClick(event.getX(), event.getY(), postresCanvas));
+        generalCanvas.setOnMouseClicked(event -> handleCanvasClick(event.getX(), event.getY(), generalCanvas));
     }
-
 
     private void startDrawingAnimation() {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 try {
-                    // Tu código de dibujo aquí
                     drawOnCanvas(calienteCanvas, Main.comandsByTag.get("caliente"));
                     drawOnCanvas(frioCanvas, Main.comandsByTag.get("frio"));
                     drawOnCanvas(postresCanvas, Main.comandsByTag.get("postre"));
                     drawOnCanvas(generalCanvas, Main.comandsByTag.get("general"));
                 } catch (Exception e) {
-                    e.printStackTrace();  // Esto te ayuda a detectar si algo está fallando
+                    e.printStackTrace();
                 }
             }
         };
@@ -103,184 +107,204 @@ public class ControllerOrderClient {
         if (comandas == null || comandas.isEmpty()) {
             return;
         }
-    
+
         GraphicsContext gc = canvas.getGraphicsContext2D();
-    
-        // Limpia el lienzo antes de dibujar
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    
-        double rectWidth = canvas.getWidth() / 5 - 25; // 5 columnas, con separaciones de 25px
-        double padding = 25;  // Espaciado entre rectángulos y bordes
-    
-        // Coordenadas iniciales
+
+        List<CommandArea> commandAreas = new ArrayList<>();
+        commandAreasByCanvas.put(canvas, commandAreas);
+
+        double rectWidth = canvas.getWidth() / 5 - 25; // 5 columnas
+        double padding = 25;
+
         double x = padding;
         double y = padding;
-    
+
         for (int i = 0; i < comandas.size(); i++) {
             Comanda comanda = comandas.get(i);
-    
-            // Agrupamos los productos por nombre y estado
-            Map<String, Map<String, Integer>> productGroups = new HashMap<>();
+
+            // Verifica el estado de la comanda
+            String estado = "listo";
+
             for (CommandProduct commandProduct : comanda.getProducts()) {
-                String productName = commandProduct.getProducte().getNombre();  // Nombre del producto
-                String productState = commandProduct.getEstado();  // Estado del producto
-    
-                // Solo agrupar y mostrar productos con estado pendiente o listo
-                if (productState.equals("pendiente") || productState.equals("listo")) {
-                    // Agrupar por nombre y estado
-                    productGroups.putIfAbsent(productName, new HashMap<>());
-                    productGroups.get(productName).put(productState, 
-                        productGroups.get(productName).getOrDefault(productState, 0) + 1);
+                if (commandProduct.getEstado().equals("pendiente")) {
+                    estado = "pendiente";
+                    break;
                 }
             }
-    
-            // Calculamos la altura total de la comanda, que depende de la cantidad de productos
-            double rectHeight = 50 + productGroups.size() * 45;  // Altura base + altura de los productos
-    
-            // Si la comanda no cabe en la columna actual, distribúyela en varias columnas
-            while (y + rectHeight > canvas.getHeight()) {
-                // La comanda no cabe en la columna actual, salta a la siguiente columna
+
+            comanda.setEstado(estado);
+
+            if (comanda.getEstado().equals("listo")) {
+                continue;
+            }
+
+            Map<String, Map<String, Integer>> productGroups = new HashMap<>();
+            for (CommandProduct product : comanda.getProducts()) {
+                String name = product.getProducte().getNombre();
+                String state = product.getEstado();
+                productGroups.putIfAbsent(name, new HashMap<>());
+                productGroups.get(name).put(state, productGroups.get(name).getOrDefault(state, 0) + 1);
+            }
+
+            // Calcula tamaño del rectángulo de comanda
+            double rectHeight = 50 + productGroups.size() * 45;
+
+            if (y + rectHeight > canvas.getHeight()) {
                 x += rectWidth + padding;
                 y = padding;
-    
-                // Si ya no hay espacio en el ancho del canvas, emite un aviso y detiene el dibujo
                 if (x + rectWidth > canvas.getWidth()) {
                     System.out.println("Advertencia: No caben más columnas en el canvas.");
-                    return; // Detiene la ejecución si no hay espacio
-                }
-            }
-    
-            // Dibuja el rectángulo grande de la comanda
-            gc.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-            gc.fillRect(x, y, rectWidth, rectHeight);
-    
-            // Dibuja el texto de la comanda con fondo blanco
-            gc.setFill(javafx.scene.paint.Color.WHITE);
-            gc.fillRect(x + 5, y + 5 , rectWidth - 10, 40);  // Fondo del texto
-            gc.setFill(javafx.scene.paint.Color.BLACK);
-            gc.fillText("Comanda " + (i + 1), x + 10, y + 25);  // Texto de la comanda
-    
-            // Posición inicial para los productos dentro de la comanda
-            double productY = y + 50;  // Empieza debajo del texto de la comanda
-    
-            // Dibuja los productos agrupados dentro de la comanda
-            for (Map.Entry<String, Map<String, Integer>> productEntry : productGroups.entrySet()) {
-                String productName = productEntry.getKey(); // Nombre del producto
-                Map<String, Integer> stateCounts = productEntry.getValue();  // Agrupado por estado
-    
-                for (Map.Entry<String, Integer> stateEntry : stateCounts.entrySet()) {
-                    String state = stateEntry.getKey();  // Estado del producto (pendiente, listo, etc.)
-                    int count = stateEntry.getValue();  // Cantidad de productos con este estado
-    
-                    // Asignar color según el estado
-                    javafx.scene.paint.Color color;
-                    if (state.equals("pendiente")) {
-                        color = javafx.scene.paint.Color.WHITE;  // Productos pendientes en blanco
-                    } else if (state.equals("listo")) {
-                        color = javafx.scene.paint.Color.GRAY;  // Productos listos en gris
-                    } else {
-                        color = javafx.scene.paint.Color.LIGHTGREEN;  // Este caso no debería ocurrir debido al filtro
-                    }
-    
-                    // Dibuja un rectángulo con el color correspondiente
-                    gc.setFill(color);
-                    gc.fillRect(x + 5, productY, rectWidth - 10, 40);  // Un rectángulo para el grupo
-    
-                    // Dibuja el texto dentro del rectángulo (nombre del producto y cantidad)
-                    gc.setFill(javafx.scene.paint.Color.BLACK);
-                    gc.fillText(count + "x " + productName + " (" + state + ")", x + 15, productY + 25);  // Muestra cantidad, nombre y estado
-     
-                    // Incrementa la posición Y para el siguiente grupo de productos
-                    productY += 20 + padding;  // Espaciado entre productos
-                }
-            }
-    
-            // Incrementa la posición vertical para la siguiente comanda
-            y += rectHeight + 10;
-        }
-    }
-    
-    private void handleCanvasClick(javafx.scene.input.MouseEvent event, Canvas canvas, List<Comanda> comandas) {
-        double clickX = event.getX();
-        double clickY = event.getY();
-    
-        double padding = 25;
-        double rectWidth = canvas.getWidth() / 5 - padding;  // 5 columnas, con espaciado
-        double x = padding;
-        double y = padding;
-    
-        for (int i = 0; i < comandas.size(); i++) {
-            Comanda comanda = comandas.get(i);
-    
-            // Agrupar productos como antes
-            Map<String, Map<String, Integer>> productGroups = new HashMap<>();
-            for (CommandProduct commandProduct : comanda.getProducts()) {
-                String productName = commandProduct.getProducte().getNombre();
-                String productState = commandProduct.getEstado();
-    
-                if (productState.equals("pendiente") || productState.equals("listo")) {
-                    productGroups.putIfAbsent(productName, new HashMap<>());
-                    productGroups.get(productName).put(productState,
-                            productGroups.get(productName).getOrDefault(productState, 0) + 1);
-                }
-            }
-    
-            // Calcular la altura del rectángulo de la comanda
-            double rectHeight = 50 + productGroups.size() * 45;  // Altura base + productos
-    
-            // Detección de clic en el título de la comanda
-            if (clickX >= x && clickX <= x + rectWidth && clickY >= y && clickY <= y + 40) { // Solo el área del título (comanda)
-                System.out.println("Se hizo clic en el título de la comanda " + (i + 1) + " (Mesa: " + comanda.getNumber() + ")");
-    
-                // Aquí puedes agregar la lógica que desees para cuando se haga clic en el título de la comanda
-                return;  // Clic detectado en el título, salimos
-            }
-    
-            // Si no ha sido clic en el título, verificar si es clic en los productos
-            if (clickX >= x && clickX <= x + rectWidth && clickY >= y + 50 && clickY <= y + rectHeight) {
-                // Llamada a la detección de clic en los productos
-                detectProductClick(clickX, clickY, x, y, rectWidth, productGroups, comanda.getNumber());
-                return; // Clic detectado en los productos, salimos
-            }
-    
-            // Si la comanda no cabe en esta columna, salta a la siguiente
-            y += rectHeight + 10;
-            if (y + rectHeight > canvas.getHeight()) {
-                x += rectWidth + padding;  // Salta a la siguiente columna
-                y = padding;  // Resetea la posición Y
-                if (x + rectWidth > canvas.getWidth()) {
-                    return; // Si no hay espacio en el canvas, termina la detección
-                }
-            }
-        }
-    }
-    
-    private void detectProductClick(double clickX, double clickY, double comandaX, double comandaY, double rectWidth, Map<String, Map<String, Integer>> productGroups, int numeroMesa) {
-        double productY = comandaY + 50;  // Empieza después del rectángulo del título de la comanda
-
-        // Iterar sobre los grupos de productos
-        for (Map.Entry<String, Map<String, Integer>> productEntry : productGroups.entrySet()) {
-            String productName = productEntry.getKey();
-            Map<String, Integer> stateCounts = productEntry.getValue();
-
-            // Iterar sobre los estados de los productos
-            for (Map.Entry<String, Integer> stateEntry : stateCounts.entrySet()) {
-                String state = stateEntry.getKey();
-                int count = stateEntry.getValue();
-
-                // Verificar si el clic está dentro del área del producto
-                double productHeight = 40;  // Altura de cada producto
-
-                if (clickX >= comandaX + 5 && clickX <= comandaX + rectWidth - 10 &&
-                    clickY >= productY && clickY <= productY + productHeight) {
-                    // Si el clic está dentro de este producto
-                    System.out.println("Se hizo clic en el producto " + count + "x " + productName + " (" + state + ") en la mesa " + numeroMesa);
                     return;
                 }
+            }
 
-                productY += productHeight + 25;  // Espacio entre productos
+            // Dibuja la comanda
+            gc.setFill(Color.LIGHTGRAY);
+            gc.fillRect(x, y, rectWidth, rectHeight);
+
+            gc.setFill(Color.WHITE);
+            gc.fillRect(x + 5, y + 5, rectWidth - 10, 40);
+            gc.setFill(Color.BLACK);
+
+            int numTaula = comanda.getNumber();
+            String nombreCamarero = comanda.getClientFX().getNombre();
+
+            gc.fillText("Mesa " + Integer.toString(numTaula) + "  - Cambrer " + nombreCamarero, x + 10, y + 25);
+
+            CommandArea comandaArea = new CommandArea(x, y, rectWidth, rectHeight, comanda);
+            commandAreas.add(comandaArea);
+
+            double productY = y + 50;
+
+            for (Map.Entry<String, Map<String, Integer>> entry : productGroups.entrySet()) {
+                String name = entry.getKey();
+                Map<String, Integer> stateCounts = entry.getValue();
+
+                for (Map.Entry<String, Integer> stateEntry : stateCounts.entrySet()) {
+                    String state = stateEntry.getKey();
+                    int count = stateEntry.getValue();
+
+                    Color color = state.equals("pendiente") ? Color.WHITE : Color.GRAY;
+                    gc.setFill(color);
+                    gc.fillRect(x + 5, productY, rectWidth - 10, 40);
+
+                    gc.setFill(Color.BLACK);
+                    gc.fillText(count + "x " + name + " (" + state + ")", x + 15, productY + 25);
+
+                    CommandProductArea productArea = new CommandProductArea(
+                        x + 5, productY, rectWidth - 10, 40, state, count, name, comanda);
+                    comandaArea.products.add(productArea);
+
+                    productY += 45;
+                }
+            }
+            y += rectHeight + 10;
+        }
+    }
+
+    private void handleCanvasClick(double clickX, double clickY, Canvas canvas) {
+        List<CommandArea> commandAreas = commandAreasByCanvas.get(canvas);
+        if (commandAreas == null) {
+            return;
+        }
+
+        for (CommandArea commandArea : commandAreas) {
+            if (commandArea.contains(clickX, clickY)) {
+                if (commandArea.containsTitle(clickX, clickY)) {
+                    System.out.println("Se hizo clic en el título de la comanda: " + commandArea.comanda.getNumber());
+                    sendCommandDone(commandArea.comanda.getNumber());
+                } else {
+                    for (CommandProductArea productArea : commandArea.products) {
+                        if (productArea.contains(clickX, clickY)) {
+                            System.out.println("Se hizo clic en el producto: " + productArea.name + " (" + productArea.state + ")");
+                            if (productArea.state.equals("pendiente")) {
+                                sendCommandProductDone(commandArea.comanda.getNumber(), productArea.name);
+                            }
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
 
+    private void sendCommandProductDone(int commandTable, String productName) {
+        try {
+            JSONObject message = new JSONObject();
+            message.put("type", "product_done");
+            message.put("table", commandTable);
+            message.put("product", productName);
+
+            sendToServer(message.toString());
+            System.out.println("Mensaje enviado al servidor: " + message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendCommandDone(int commandTable) {
+        try {
+            JSONObject message = new JSONObject();
+            message.put("type", "command_done");
+            message.put("table", commandTable);
+
+            sendToServer(message.toString());
+            System.out.println("Mensaje enviado al servidor: " + message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendToServer(String message) {
+        if (Main.clienteWebSocket != null && Main.clienteWebSocket.isOpen()) {
+            Main.clienteWebSocket.send(message);
+        } else {
+            System.err.println("WebSocket no está conectado.");
+        }
+    }
+
+    static class CommandArea {
+        double x, y, width, height;
+        Comanda comanda;
+        List<CommandProductArea> products = new ArrayList<>();
+
+        CommandArea(double x, double y, double width, double height, Comanda comanda) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.comanda = comanda;
+        }
+
+        boolean contains(double clickX, double clickY) {
+            return clickX >= x && clickX <= x + width && clickY >= y && clickY <= y + height;
+        }
+
+        boolean containsTitle(double clickX, double clickY) {
+            return contains(clickX, clickY) && clickY <= y + 40;
+        }
+    }
+
+    static class CommandProductArea {
+        double x, y, width, height;
+        String state, name;
+        int count;
+        Comanda comanda;
+
+        CommandProductArea(double x, double y, double width, double height, String state, int count, String name, Comanda comanda) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.state = state;
+            this.name = name;
+            this.count = count;
+            this.comanda = comanda;
+        }
+
+        boolean contains(double clickX, double clickY) {
+            return clickX >= x && clickX <= x + width && clickY >= y && clickY <= y + height;
+        }
+    }
 }

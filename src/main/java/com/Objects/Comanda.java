@@ -61,5 +61,21 @@ public class Comanda {
             info.put(nombreProducto, info.getOrDefault(nombreProducto, 0) + 1);
         }
         return info;
-    }    
+    }   
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Comanda Número: ").append(number).append("\n");
+        sb.append("Número de Clientes: ").append(clientsNumber).append("\n");
+        sb.append("Estado de la Comanda: ").append(estado).append("\n");
+        sb.append("Productos:\n");
+
+        for (CommandProduct commandProduct : productsList) {
+            sb.append(" - Producto: ").append(commandProduct.getProducte().getNombre())
+            .append(", Estado: ").append(commandProduct.getEstado()).append("\n");
+        }
+
+        return sb.toString();
+    }
 }    
