@@ -29,7 +29,7 @@ import com.Objects.UtilsViews;
 public class Main extends Application {
 
     public static WebSocketClient clienteWebSocket;
-    public static Map<String,List<Comanda>> comandsByTag;
+    public static Map<String,List<Comanda>> comandsByTag; 
     public static Stage stage;
 
     @Override

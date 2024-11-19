@@ -8,7 +8,7 @@ public class CommandProduct {
     private String estado;
     private String comentario;
 
-    private static final List<String> ESTADOS = List.of("pendiente","listo","pagado");
+    private static final List<String> ESTADOS = List.of("demanat","pendiente","listo","pagado");
 
     public CommandProduct(Product producte) {
         this.producte = producte;

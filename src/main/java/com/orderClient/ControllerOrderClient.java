@@ -107,49 +107,36 @@ public class ControllerOrderClient {
         if (comandas == null || comandas.isEmpty()) {
             return;
         }
-
+    
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
+    
         List<CommandArea> commandAreas = new ArrayList<>();
         commandAreasByCanvas.put(canvas, commandAreas);
-
+    
         double rectWidth = canvas.getWidth() / 5 - 25; // 5 columnas
         double padding = 25;
-
+    
         double x = padding;
         double y = padding;
-
+    
         for (int i = 0; i < comandas.size(); i++) {
             Comanda comanda = comandas.get(i);
 
-            // Verifica el estado de la comanda
-            String estado = "listo";
-
-            for (CommandProduct commandProduct : comanda.getProducts()) {
-                if (commandProduct.getEstado().equals("pendiente")) {
-                    estado = "pendiente";
-                    break;
-                }
-            }
-
-            comanda.setEstado(estado);
-
-            if (comanda.getEstado().equals("listo")) {
+            if (comanda.getEstado().equals("pagado")) {
                 continue;
             }
 
-            Map<String, Map<String, Integer>> productGroups = new HashMap<>();
-            for (CommandProduct product : comanda.getProducts()) {
-                String name = product.getProducte().getNombre();
-                String state = product.getEstado();
-                productGroups.putIfAbsent(name, new HashMap<>());
-                productGroups.get(name).put(state, productGroups.get(name).getOrDefault(state, 0) + 1);
-            }
-
+            // Verifica el estado de la comanda
+            String estadoComanda = determinarEstadoComanda(comanda);
+    
+            comanda.setEstado(estadoComanda);
+    
+            Map<String, Map<String, Integer>> productGroups = agruparProductosPorEstado(comanda);
+    
             // Calcula tamaño del rectángulo de comanda
             double rectHeight = 50 + productGroups.size() * 45;
-
+    
             if (y + rectHeight > canvas.getHeight()) {
                 x += rectWidth + padding;
                 y = padding;
@@ -158,49 +145,104 @@ public class ControllerOrderClient {
                     return;
                 }
             }
-
-            // Dibuja la comanda
+    
+            // Dibuja el fondo de la comanda
             gc.setFill(Color.LIGHTGRAY);
             gc.fillRect(x, y, rectWidth, rectHeight);
-
+    
             gc.setFill(Color.WHITE);
             gc.fillRect(x + 5, y + 5, rectWidth - 10, 40);
             gc.setFill(Color.BLACK);
-
+    
             int numTaula = comanda.getNumber();
             String nombreCamarero = comanda.getClientFX().getNombre();
-
-            gc.fillText("Mesa " + Integer.toString(numTaula) + "  - Cambrer " + nombreCamarero, x + 10, y + 25);
-
+    
+            gc.fillText("Mesa " + Integer.toString(numTaula) + " - Cambrer " + nombreCamarero, x + 10, y + 25);
+    
             CommandArea comandaArea = new CommandArea(x, y, rectWidth, rectHeight, comanda);
             commandAreas.add(comandaArea);
-
+    
             double productY = y + 50;
-
+    
             for (Map.Entry<String, Map<String, Integer>> entry : productGroups.entrySet()) {
-                String name = entry.getKey();
+                String productName = entry.getKey();
                 Map<String, Integer> stateCounts = entry.getValue();
-
+    
                 for (Map.Entry<String, Integer> stateEntry : stateCounts.entrySet()) {
                     String state = stateEntry.getKey();
                     int count = stateEntry.getValue();
-
-                    Color color = state.equals("pendiente") ? Color.WHITE : Color.GRAY;
+    
+                    // Determina el color según el estado
+                    Color color = getColorByState(state);
                     gc.setFill(color);
                     gc.fillRect(x + 5, productY, rectWidth - 10, 40);
-
+    
                     gc.setFill(Color.BLACK);
-                    gc.fillText(count + "x " + name + " (" + state + ")", x + 15, productY + 25);
-
+                    gc.fillText(count + "x " + productName + " (" + state + ")", x + 15, productY + 30);
+    
                     CommandProductArea productArea = new CommandProductArea(
-                        x + 5, productY, rectWidth - 10, 40, state, count, name, comanda);
+                        x + 5, productY, rectWidth - 10, 40, state, count, productName, comanda);
                     comandaArea.products.add(productArea);
-
+    
                     productY += 45;
                 }
             }
             y += rectHeight + 10;
         }
+    }
+
+    private Color getColorByState(String state) {
+        switch (state) {
+            case "demanat":
+                return Color.LIGHTBLUE;
+            case "pendiente":
+                return Color.YELLOW;
+            case "listo":
+                return Color.LIGHTGREEN;
+            case "pagado":
+                return Color.GRAY;
+            default:
+                return Color.WHITE; // Color por defecto
+        }
+    }
+    
+    private String determinarEstadoComanda(Comanda comanda) {
+        boolean allPaid = true; // Para verificar si todos están pagados
+        String estado = "listo"; // Estado predeterminado
+    
+        for (CommandProduct product : comanda.getProducts()) {
+            String productEstado = product.getEstado();
+    
+            if (!productEstado.equals("pagado")) {
+                allPaid = false; // Si hay productos que no están pagados, no todos están en "pagado"
+            }
+    
+            if (productEstado.equals("pendiente")) {
+                return "pendiente"; // Prioridad máxima: si hay un producto pendiente, el estado de la comanda es "pendiente"
+            }
+    
+            if (productEstado.equals("demanat")) {
+                estado = "demanat"; // Si hay un producto "demanat" y no hay "pendiente", será "demanat"
+            }
+        }
+    
+        // Si todos los productos están pagados
+        if (allPaid) {
+            return "pagado";
+        }
+    
+        return estado; // Devuelve el estado calculado
+    }
+    
+    private Map<String, Map<String, Integer>> agruparProductosPorEstado(Comanda comanda) {
+        Map<String, Map<String, Integer>> productGroups = new HashMap<>();
+        for (CommandProduct product : comanda.getProducts()) {
+            String name = product.getProducte().getNombre();
+            String state = product.getEstado();
+            productGroups.putIfAbsent(name, new HashMap<>());
+            productGroups.get(name).put(state, productGroups.get(name).getOrDefault(state, 0) + 1);
+        }
+        return productGroups;
     }
 
     private void handleCanvasClick(double clickX, double clickY, Canvas canvas) {
@@ -213,14 +255,12 @@ public class ControllerOrderClient {
             if (commandArea.contains(clickX, clickY)) {
                 if (commandArea.containsTitle(clickX, clickY)) {
                     System.out.println("Se hizo clic en el título de la comanda: " + commandArea.comanda.getNumber());
-                    sendCommandDone(commandArea.comanda.getNumber());
+                    sendCommandSelect(commandArea.comanda.getNumber());
                 } else {
                     for (CommandProductArea productArea : commandArea.products) {
                         if (productArea.contains(clickX, clickY)) {
                             System.out.println("Se hizo clic en el producto: " + productArea.name + " (" + productArea.state + ")");
-                            if (productArea.state.equals("pendiente")) {
-                                sendCommandProductDone(commandArea.comanda.getNumber(), productArea.name);
-                            }
+                            sendCommandProductSelect(commandArea.comanda.getNumber(), productArea.name);
                             return;
                         }
                     }
@@ -229,10 +269,10 @@ public class ControllerOrderClient {
         }
     }
 
-    private void sendCommandProductDone(int commandTable, String productName) {
+    private void sendCommandProductSelect(int commandTable, String productName) {
         try {
             JSONObject message = new JSONObject();
-            message.put("type", "product_done");
+            message.put("type", "product_select");
             message.put("table", commandTable);
             message.put("product", productName);
 
@@ -243,10 +283,10 @@ public class ControllerOrderClient {
         }
     }
 
-    public void sendCommandDone(int commandTable) {
+    public void sendCommandSelect(int commandTable) {
         try {
             JSONObject message = new JSONObject();
-            message.put("type", "command_done");
+            message.put("type", "command_select");
             message.put("table", commandTable);
 
             sendToServer(message.toString());

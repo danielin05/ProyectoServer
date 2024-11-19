@@ -185,26 +185,41 @@ public class Main extends WebSocketServer {
 
                     break;
 
-                case "command_done":
+                case "command_select":
                     int numTable = obj.getInt("table");
-                    
+
                     for (Comanda comanda : comands) {
                         if (comanda.getNumber() == numTable) {
-                            for (CommandProduct commandProduct : comanda.getProducts()) {
-                                commandProduct.setEstado("listo");
+                            String currentEstado = comanda.getEstado();
+                            String nextEstado = getNextEstado(currentEstado);
+
+                            if (nextEstado == null) {
+                                System.err.println("No hay un siguiente estado para la comanda " + numTable);
+                                break;
                             }
-                            comanda.setEstado("listo");
-                            System.out.println("Se cambió el estado de la comanda " + numTable  + " a 'listo'");
 
+                            // Cambiar el estado de todos los productos al siguiente estado
+                            for (CommandProduct commandProduct : comanda.getProducts()) {
+                                commandProduct.setEstado(nextEstado);
+                                if ("listo".equals(nextEstado)) {
+                                    System.out.println("Producto listo: " + commandProduct.getProducte().getNombre());
+
+                                }
+                            }
+
+                            // Cambiar el estado de la comanda al siguiente estado
+                            comanda.setEstado(nextEstado);
+                            System.out.println(comanda.getEstado());
+                            System.out.println("Se cambió el estado de la comanda " + numTable + " a '" + nextEstado + "'");
+
+                            // Enviar actualización a todos los clientes
                             broadcast(loadCommandsData());
-
                             break;
                         }
                     }
-
                     break;
 
-                    case "product_done":
+                    case "product_select":
                         System.out.println(message.toString());
 
                         // Obtener datos del mensaje
@@ -214,42 +229,52 @@ public class Main extends WebSocketServer {
                         boolean comandaFound = false;
 
                         for (Comanda comanda : comands) {
-                            // Buscar la comanda correspondiente por número de mesa
                             if (comanda.getNumber() == numTableProductDone) {
                                 comandaFound = true;
-                                boolean productFound = false;
 
-                                // Iterar solo sobre los productos de esta comanda
-                                System.out.println(comanda);
+                                boolean productUpdated = false;
+
                                 for (CommandProduct commandProduct : comanda.getProducts()) {
-                                    // Cambiar el estado del primer producto pendiente especificado a "listo"
-                                    if (commandProduct.getProducte().getNombre().equals(commandProductName) && commandProduct.getEstado().equals("pendiente")) {
-                                        commandProduct.setEstado("listo");
-                                        productFound = true;
+                                    if (commandProduct.getProducte().getNombre().equals(commandProductName)) {
+                                        String currentProductEstado = commandProduct.getEstado();
+                                        String nextProductEstado = getNextEstado(currentProductEstado);
 
-                                        System.out.println("Se cambió el producto '" + commandProductName + "' de la comanda " + numTableProductDone + " a 'listo'");
-                                        break; // Salir del bucle después de cambiar el primer producto
+                                        if (nextProductEstado == null) {
+                                            System.err.println("El producto '" + commandProductName + "' ya está en el último estado.");
+                                            break;
+                                        }
+
+                                        // Cambiar el estado del producto al siguiente
+                                        commandProduct.setEstado(nextProductEstado);
+                                        productUpdated = true;
+
+                                        // Verificar si el estado ahora es "listo"
+                                        if ("listo".equals(nextProductEstado)) {
+                                            System.out.println("Producto listo: " + commandProductName); 
+                                        }
+
+                                        System.out.println("Se cambió el estado del producto '" + commandProductName + "' a '" + nextProductEstado + "' en la comanda " + numTableProductDone);
+                                        break;
                                     }
                                 }
-                                System.out.println(comanda);
 
-                                if (!productFound) {
-                                    System.err.println("Producto no encontrado o ya estaba listo en la comanda " + numTableProductDone);
+                                if (!productUpdated) {
+                                    System.err.println("Producto '" + commandProductName + "' no encontrado o ya estaba en el último estado en la comanda " + numTableProductDone);
                                 }
 
-                                // Actualizar a todos los clientes después de modificar la comanda
+                                // Verificar y actualizar el estado de la comanda
+                                updateComandaEstado(comanda);
+
+                                // Enviar actualización a todos los clientes
                                 broadcast(loadCommandsData());
-                                break; // Salir del bucle principal una vez que se procesó la comanda correspondiente
+                                break;
                             }
                         }
 
-                        // Manejar el caso en que la comanda no se encontró
                         if (!comandaFound) {
                             System.err.println("Comanda no encontrada para la mesa " + numTableProductDone);
                         }
-
                         break;
-
                 default:
                     System.out.println("Mensaje no reconocido: " + type);
                     break;
@@ -392,6 +417,47 @@ public class Main extends WebSocketServer {
             return null;
         }        
     } 
+
+    private static final List<String> ESTADOS = List.of("demanat", "pendiente", "listo", "pagado");
+
+    private String getNextEstado(String currentEstado) {
+        int index = ESTADOS.indexOf(currentEstado);
+        if (index == -1 || index == ESTADOS.size() - 1) {
+            return null; // No hay siguiente estado
+        }
+        return ESTADOS.get(index + 1);
+    }
+
+    private void updateComandaEstado(Comanda comanda) {
+        boolean allPendiente = true;
+        boolean allListo = true;
+        boolean allPagado = true;
+    
+        for (CommandProduct product : comanda.getProducts()) {
+            String estado = product.getEstado();
+            if (!estado.equals("pendiente")) {
+                allPendiente = false;
+            }
+            if (!estado.equals("listo")) {
+                allListo = false;
+            }
+            if (!estado.equals("pagado")) {
+                allPagado = false;
+            }
+        }
+    
+        if (allPagado) {
+            comanda.setEstado("pagado");
+        } else if (allListo) {
+            comanda.setEstado("listo");
+        } else if (allPendiente) {
+            comanda.setEstado("pendiente");
+        } else {
+            comanda.setEstado("demanat");
+        }
+    
+        System.out.println("Estado actualizado de la comanda " + comanda.getNumber() + " a '" + comanda.getEstado() + "'");
+    }
     
     private String loadCommandsData() {
         JSONArray comandsJsonArray = new JSONArray();

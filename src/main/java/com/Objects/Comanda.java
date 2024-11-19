@@ -12,7 +12,7 @@ public class Comanda {
     private ClientFX clientFX;
     private String estado;
 
-    private static final List<String> ESTADOS = List.of("pendiente", "listo", "pagado");
+    private static final List<String> ESTADOS = List.of("demanat","pendiente", "listo", "pagado");
 
     public Comanda(int number, int clientsNumber, ClientFX clientFX) {
         this.number = number;
