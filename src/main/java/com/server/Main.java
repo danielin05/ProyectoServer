@@ -16,6 +16,7 @@ import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
 import com.Objects.base64Transform;
+import com.Objects.SSHMySQLConnection;
 
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -24,6 +25,7 @@ import org.jline.reader.UserInterruptException;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +41,7 @@ public class Main extends WebSocketServer {
     private List<Comanda> comands;
 
     private static JSONArray productList;
+    private static SSHMySQLConnection dataConnection;
 
     public Main(InetSocketAddress address) {
         super(address);
@@ -49,42 +52,9 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
-        ClientFX client1 = new ClientFX("Alice", "001", "password123", null);
-        ClientFX client2 = new ClientFX("Bob", "002", "password456", null);
+        dataConnection = new SSHMySQLConnection();
 
-        Product product1 = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "imageURL1");
-        product1.addTags(List.of("Italian", "Vegetarian"));
-        Product product2 = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "imageURL2");
-        product2.addTags(List.of("Italian", "Pasta"));
-        Product product3 = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "imageURL3");
-        product3.addTags(List.of("Salad", "Vegetarian"));
-
-        // Crear los productos para las comandas
-        CommandProduct commandProduct1 = new CommandProduct(product1);
-        commandProduct1.setEstado("listo");
-        commandProduct1.setComentario("Extra cheese");
-
-        CommandProduct commandProduct2 = new CommandProduct(product2);
-        commandProduct2.setEstado("pendiente");
-        commandProduct2.setComentario("No bacon");
-
-        CommandProduct commandProduct3 = new CommandProduct(product3);
-        commandProduct3.setEstado("pendiente");
-        commandProduct3.setComentario("Add grilled chicken");
-
-        // Crear las comandas
-        Comanda comanda1 = new Comanda(1, 2, client1);
-        comanda1.addProducts(List.of(commandProduct1, commandProduct2, commandProduct1, commandProduct1, commandProduct2, commandProduct3));
-
-        Comanda comanda2 = new Comanda(2, 1, client2);
-        comanda2.addProducts(List.of(commandProduct3, commandProduct3, commandProduct3, commandProduct1));
-
-        comands.add(comanda1);
-        comands.add(comanda2);
-
-        clients.add(new ClientFX("Admin", "1", "1", null));
-        clients.add(new ClientFX("Responsable", "2", "2", null));
-        clients.add(new ClientFX("Cliente", "3", "3", null));
+        dataConnection.connect();
 
     }
 
@@ -327,6 +297,8 @@ public class Main extends WebSocketServer {
                         newComanda.addProducts(newProducts);
 
                         comands.add(newComanda);
+
+                        saveComanda(newComanda);
 
                         // Enviar actualización a todos los clientes
                         broadcast(loadCommandsData());
@@ -611,4 +583,70 @@ public class Main extends WebSocketServer {
         }
         return null;
     }
+
+    private boolean saveComanda(Comanda comanda) {
+        try {
+            // Iniciar transacción manualmente
+            dataConnection.executeUpdate("START TRANSACTION");
+
+            // Insertar la comanda en la tabla "comanda"
+            String insertComandaSQL = String.format(
+                "INSERT INTO comanda (id_camarero, num_mesa, clientes, estado, precio_total) " +
+                "VALUES (%d, %d, %d, '%s', %.2f)",
+                Integer.parseInt(comanda.getClientFX().getId()),  // ID del camarero
+                comanda.getNumber(),  // Número de mesa
+                comanda.getClientsNumber(),  // Número de clientes
+                comanda.getEstado(),  // Estado de la comanda
+                calculateTotalPrice(comanda) // Precio total de la comanda
+            );
+
+            int comandaId = dataConnection.executeUpdate(insertComandaSQL);
+            if (comandaId <= 0) {
+                dataConnection.executeUpdate("ROLLBACK");
+                throw new SQLException("Fallo al insertar la comanda.");
+            }
+
+            // Insertar productos en la tabla "detalle_comanda"
+            for (CommandProduct product : comanda.getProducts()) {
+                String insertDetalleSQL = String.format(
+                    "INSERT INTO detalle_comanda (id_comanda, nombre_producto, descripcion_producto, precio_producto, estado_producto) " +
+                    "VALUES (%d, '%s', '%s', %.2f, '%s')",
+                    comandaId,  // ID de la comanda
+                    product.getProducte().getNombre(),  // Nombre del producto
+                    product.getProducte().getDescription(),  // Descripción del producto
+                    Double.parseDouble(product.getProducte().getPreu()),  // Precio del producto
+                    product.getEstado()  // Estado del producto
+                );
+
+                int detalleResult = dataConnection.executeUpdate(insertDetalleSQL);
+                if (detalleResult <= 0) {
+                    dataConnection.executeUpdate("ROLLBACK");
+                    throw new SQLException("Fallo al insertar detalle de la comanda.");
+                }
+            }
+
+            // Confirmar la transacción
+            dataConnection.executeUpdate("COMMIT");
+            System.out.println("Comanda guardada exitosamente.");
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                dataConnection.executeUpdate("ROLLBACK");
+            } catch (Exception rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        }
+    }
+
+    private double calculateTotalPrice(Comanda comanda) {
+        double total = 0.0;
+        for (CommandProduct product : comanda.getProducts()) {
+            total += Double.parseDouble(product.getProducte().getPreu());
+        }
+        return total;
+    }
+    
 }
