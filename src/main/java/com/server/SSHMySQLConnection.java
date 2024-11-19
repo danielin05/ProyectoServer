@@ -1,64 +1,60 @@
 package com.server;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.userauth.keyprovider.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
 
 public class SSHMySQLConnection {
 
     public static void main(String[] args) {
         // Configuración de SSH
-        String sshHost = "ieticloudpro.ieti.cat";  // IP o dominio del servidor SSH
-        String sshUser = "barretina3";      // Tu usuario SSH
+        String sshHost = "ieticloudpro.ieti.cat";  // Dirección del servidor SSH
+        String sshUser = "barretina3";      // Usuario SSH
         String sshPrivateKey = "C:\\Users\\pablo\\pvicenterourassh"; // Ruta a tu clave privada SSH
-        int sshPort = 20127;                      // Puerto SSH (22 por defecto)
+        int sshPort = 20127;                      // Puerto SSH
 
-        // Configuración de MySQL
-        String mysqlHost = "localhost";         // Siempre es localhost en el túnel
-        int mysqlPort = 3306;                   // Puerto de MySQL (3306 por defecto)
-        String mysqlDatabase = "barretina"; // Nombre de la base de datos
-        String mysqlUser = "admin"; // Usuario de MySQL
-        String mysqlPassword = "admin"; // Contraseña de MySQL
+        int mysqlPort = 3306;                   // Puerto de MySQL
+        String mysqlDatabase = "barretina";     // Nombre de la base de datos
+        String mysqlUser = "admin";             // Usuario MySQL
+        String mysqlPassword = "admin";         // Contraseña MySQL
 
         // Puerto local en el que se escucha el túnel
         int localPort = 3306;
 
-        try {
-            // Crear una nueva sesión SSH
-            JSch jsch = new JSch();
+        // Crear un cliente SSH con SSHJ
+        try (SSHClient client = new SSHClient()) {
 
-            // Cargar la clave privada SSH (asegúrate de que el archivo esté en formato PEM y con la ruta correcta)
-            jsch.addIdentity(sshPrivateKey);
+            // Configurar el cliente SSH
+            client.loadKnownHosts();
+            client.addHostKeyVerifier((hostname, port, key) -> true); // Deshabilitar verificación de clave (no recomendado para producción)
 
-            // Crear sesión SSH
-            Session session = jsch.getSession(sshUser, sshHost, sshPort);
+            // Cargar la clave privada
+            KeyProvider keyProvider = client.loadKeys(sshPrivateKey); // Cambié el método para cargar la clave
+            client.connect(sshHost, sshPort);
+            client.authPublickey(sshUser, keyProvider);
 
-            // Evitar advertencias de la autenticación del servidor (opcional)
-            Properties config = new Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
+            // Establecer el túnel SSH
+            try (Session session = client.startSession()) {
+                // Redirigir el puerto local al puerto de MySQL
+                session.exec("ssh -L " + localPort + ":localhost:" + mysqlPort + " " + sshUser + "@" + sshHost);
 
-            // Conectar a la sesión SSH
-            session.connect();
+                System.out.println("Túnel SSH establecido en el puerto local " + localPort);
 
-            // Redirigir el puerto local al puerto de MySQL a través del túnel SSH
-            session.setPortForwardingL(localPort, mysqlHost, mysqlPort);
-            System.out.println("Túnel SSH establecido en el puerto local " + localPort);
+                // Conectar a MySQL a través del túnel SSH
+                String jdbcUrl = "jdbc:mysql://127.0.0.1:" + localPort + "/" + mysqlDatabase;
+                Connection conn = DriverManager.getConnection(jdbcUrl, mysqlUser, mysqlPassword);
 
-            // Ahora, conecta a MySQL usando JDBC a través del túnel SSH
-            String jdbcUrl = "jdbc:mysql://127.0.0.1:" + localPort + "/" + mysqlDatabase;
-            Connection conn = DriverManager.getConnection(jdbcUrl, mysqlUser, mysqlPassword);
+                System.out.println("Conectado a la base de datos MySQL a través del túnel SSH");
 
-            System.out.println("Conectado a la base de datos MySQL a través del túnel SSH");
+                // Realizar operaciones con la base de datos...
+                // Cierra la conexión a la base de datos
+                conn.close();
 
-            // Realiza las operaciones de base de datos aquí...
-
-            // Cierra la conexión a la base de datos y SSH
-            conn.close();
-            session.disconnect();
-            System.out.println("Conexión cerrada y túnel SSH desconectado.");
+                System.out.println("Conexión cerrada y túnel SSH desconectado.");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
