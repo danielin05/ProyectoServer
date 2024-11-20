@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.Objects.Comanda;
-import com.Objects.CommandProduct;
+import com.objects.Comanda;
+import com.objects.CommandProduct;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;

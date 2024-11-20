@@ -12,6 +12,12 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.objects.ClientFX;
+import com.objects.Comanda;
+import com.objects.CommandProduct;
+import com.objects.Product;
+import com.objects.UtilsViews;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,12 +25,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import com.Objects.ClientFX;
-import com.Objects.Comanda;
-import com.Objects.CommandProduct;
-import com.Objects.Product;
-import com.Objects.UtilsViews;
 
 public class Main extends Application {
 

@@ -1,4 +1,4 @@
-package com.Objects;
+package com.objects;
 
 import javafx.application.Application;
 import javafx.scene.control.Alert;

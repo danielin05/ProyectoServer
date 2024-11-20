@@ -25,12 +25,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.Objects.ClientFX;
-import com.Objects.Comanda;
-import com.Objects.CommandProduct;
-import com.Objects.Product;
-import com.Objects.SSHMySQLConnection;
-import com.Objects.base64Transform;
+import com.objects.ClientFX;
+import com.objects.Comanda;
+import com.objects.CommandProduct;
+import com.objects.Product;
+import com.objects.SSHMySQLConnection;
+import com.objects.base64Transform;
 
 public class Main extends WebSocketServer {
 

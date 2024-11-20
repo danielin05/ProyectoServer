@@ -1,4 +1,4 @@
-package com.Objects;
+package com.objects;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
