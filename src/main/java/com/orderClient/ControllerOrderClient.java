@@ -11,12 +11,15 @@ import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class ControllerOrderClient {
 
@@ -87,20 +90,32 @@ public class ControllerOrderClient {
     }
 
     private void startDrawingAnimation() {
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                try {
-                    drawOnCanvas(calienteCanvas, Main.comandsByTag.get("caliente"));
-                    drawOnCanvas(frioCanvas, Main.comandsByTag.get("frio"));
-                    drawOnCanvas(postresCanvas, Main.comandsByTag.get("postre"));
-                    drawOnCanvas(generalCanvas, Main.comandsByTag.get("general"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            // Realizamos el dibujo aquí con un retraso controlado
+            drawOnCanvasWithDelay();
+        }
+    };
+    timer.start();
+    }
+
+    private void drawOnCanvasWithDelay() {
+        // Realizamos una actualización solo después de un pequeño retraso
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), event -> {
+            try {
+                drawOnCanvas(calienteCanvas, Main.comandsByTag.get("caliente"));
+                drawOnCanvas(frioCanvas, Main.comandsByTag.get("frio"));
+                drawOnCanvas(postresCanvas, Main.comandsByTag.get("postre"));
+                drawOnCanvas(generalCanvas, Main.comandsByTag.get("general"));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        };
-        timer.start();
+        }));
+        
+        // Este timeline se repetirá cada 100ms
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();  // Inicia el timeline con el intervalo
     }
 
     private void drawOnCanvas(Canvas canvas, List<Comanda> comandas) {
@@ -109,6 +124,8 @@ public class ControllerOrderClient {
         }
     
         GraphicsContext gc = canvas.getGraphicsContext2D();
+    
+        // Limpiamos todo el canvas, ya que las posiciones pueden cambiar
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     
         List<CommandArea> commandAreas = new ArrayList<>();
@@ -120,16 +137,16 @@ public class ControllerOrderClient {
         double x = padding;
         double y = padding;
     
+        // Ahora dibujamos cada comanda, asegurándonos de recalcular las posiciones
         for (int i = 0; i < comandas.size(); i++) {
             Comanda comanda = comandas.get(i);
-
+    
             if (comanda.getEstado().equals("pagado")) {
                 continue;
             }
-
+    
             // Verifica el estado de la comanda
             String estadoComanda = determinarEstadoComanda(comanda);
-    
             comanda.setEstado(estadoComanda);
     
             Map<String, Map<String, Integer>> productGroups = agruparProductosPorEstado(comanda);
@@ -137,9 +154,10 @@ public class ControllerOrderClient {
             // Calcula tamaño del rectángulo de comanda
             double rectHeight = 50 + productGroups.size() * 45;
     
+            // Asegúrate de que no se solapen las comandas, actualizando las posiciones
             if (y + rectHeight > canvas.getHeight()) {
-                x += rectWidth + padding;
-                y = padding;
+                x += rectWidth + padding;  // Mover a la siguiente columna
+                y = padding;  // Volver a la parte superior
                 if (x + rectWidth > canvas.getWidth()) {
                     System.out.println("Advertencia: No caben más columnas en el canvas.");
                     return;
@@ -164,6 +182,7 @@ public class ControllerOrderClient {
     
             double productY = y + 50;
     
+            // Dibuja los productos de la comanda
             for (Map.Entry<String, Map<String, Integer>> entry : productGroups.entrySet()) {
                 String productName = entry.getKey();
                 Map<String, Integer> stateCounts = entry.getValue();
@@ -181,15 +200,18 @@ public class ControllerOrderClient {
                     gc.fillText(count + "x " + productName + " (" + state + ")", x + 15, productY + 30);
     
                     CommandProductArea productArea = new CommandProductArea(
-                        x + 5, productY, rectWidth - 10, 40, state, count, productName, comanda);
+                            x + 5, productY, rectWidth - 10, 40, state, count, productName, comanda);
                     comandaArea.products.add(productArea);
     
                     productY += 45;
                 }
             }
+    
+            // Actualizamos la posición para la siguiente comanda
             y += rectHeight + 10;
         }
     }
+    
 
     private Color getColorByState(String state) {
         switch (state) {

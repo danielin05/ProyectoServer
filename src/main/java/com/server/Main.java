@@ -50,12 +50,13 @@ public class Main extends WebSocketServer {
         clients = new ArrayList<>();
         comands = new ArrayList<>();
 
+        addCommand();
+
         productList = loadProducts();
 
         dataConnection = new SSHMySQLConnection();
 
         dataConnection.connect();
-
     }
 
     @Override
@@ -648,5 +649,81 @@ public class Main extends WebSocketServer {
         }
         return total;
     }
-    
+
+    public void addCommand() {
+        // Crear la primera comanda
+        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
+        pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        Product spaghettiCarbonara = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "");
+        spaghettiCarbonara.addTags(List.of("Italian", "Pasta", "caliente"));
+        
+        CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti1 = new CommandProduct(spaghettiCarbonara);
+        
+        Comanda comanda1 = new Comanda(1, 2, new ClientFX("001", "Alice", "001"));
+        comanda1.addProducts(List.of(commandPizza1, commandSpaghetti1));
+        comands.add(comanda1);
+        
+        // Crear la segunda comanda
+        Product caesarSalad = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "");
+        caesarSalad.addTags(List.of("Salad", "Vegetarian", "frio"));
+        
+        Product margheritaPizza = new Product("Margherita Pizza", "9.00", "Tomato, mozzarella, and fresh basil", "");
+        margheritaPizza.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        CommandProduct commandSalad2 = new CommandProduct(caesarSalad);
+        CommandProduct commandPizza2 = new CommandProduct(margheritaPizza);
+        
+        Comanda comanda2 = new Comanda(2, 3, new ClientFX("002", "Bob", "002"));
+        comanda2.addProducts(List.of(commandSalad2, commandPizza2));
+        comands.add(comanda2);
+        
+        // Crear la tercera comanda
+        Product lasagna = new Product("Lasagna", "12.00", "Layers of pasta with cheese, beef, and tomato sauce", "");
+        lasagna.addTags(List.of("Italian", "caliente"));
+        
+        Product garlicBread = new Product("Garlic Bread", "4.00", "Crispy bread with garlic and butter", "");
+        garlicBread.addTags(List.of("Appetizer", "caliente"));
+        
+        CommandProduct commandLasagna3 = new CommandProduct(lasagna);
+        CommandProduct commandGarlicBread3 = new CommandProduct(garlicBread);
+        
+        Comanda comanda3 = new Comanda(3, 1, new ClientFX("003", "Charlie", "003"));
+        comanda3.addProducts(List.of(commandLasagna3, commandGarlicBread3));
+        comands.add(comanda3);
+        
+        // Crear la cuarta comanda
+        Product sushiRoll = new Product("Sushi Roll", "15.00", "Sushi with tuna, avocado, and cucumber", "");
+        sushiRoll.addTags(List.of("Japanese", "Seafood", "frio"));
+        
+        Product misoSoup = new Product("Miso Soup", "6.00", "Traditional Japanese soup with tofu and seaweed", "");
+        misoSoup.addTags(List.of("Japanese", "Soup", "caliente"));
+        
+        CommandProduct commandSushi4 = new CommandProduct(sushiRoll);
+        CommandProduct commandMisoSoup4 = new CommandProduct(misoSoup);
+        
+        Comanda comanda4 = new Comanda(4, 4, new ClientFX("004", "David", "004"));
+        comanda4.addProducts(List.of(commandSushi4, commandMisoSoup4));
+        comands.add(comanda4);
+        
+        // Crear la quinta comanda
+        Product hamburger = new Product("Hamburger", "10.50", "Beef patty, lettuce, tomato, and cheese", "");
+        hamburger.addTags(List.of("Fast Food", "Beef", "caliente"));
+        
+        Product frenchFries = new Product("French Fries", "3.50", "Crispy fried potatoes", "");
+        frenchFries.addTags(List.of("Side Dish", "caliente"));
+        
+        CommandProduct commandBurger5 = new CommandProduct(hamburger);
+        CommandProduct commandFries5 = new CommandProduct(frenchFries);
+        
+        Comanda comanda5 = new Comanda(5, 5, new ClientFX("005", "Eve", "005"));
+        comanda5.addProducts(List.of(commandBurger5, commandFries5));
+        comands.add(comanda5);
+        
+        // Imprimir todas las comandas añadidas
+        for (Comanda comanda : comands) {
+            System.out.println(comanda.toString());
+        }
+    }    
 }
