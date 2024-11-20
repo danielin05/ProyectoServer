@@ -1,9 +1,23 @@
 package com.server;
 
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -15,23 +29,8 @@ import com.Objects.ClientFX;
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
-import com.Objects.base64Transform;
 import com.Objects.SSHMySQLConnection;
-
-import org.jline.reader.EndOfFileException;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.UserInterruptException;
-
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import com.Objects.base64Transform;
 
 public class Main extends WebSocketServer {
 
@@ -48,6 +47,7 @@ public class Main extends WebSocketServer {
         webSockets = new ArrayList<>();
         currentClients = new ArrayList<>();
         clients = new ArrayList<>();
+        clients.add(new ClientFX("responsable", "01", "01"));
         comands = new ArrayList<>();
 
         addCommand();
@@ -171,6 +171,10 @@ public class Main extends WebSocketServer {
                                 commandProduct.setEstado(nextEstado);
                                 if ("listo".equals(nextEstado)) {
                                     System.out.println("Producto listo: " + commandProduct.getProducte().getNombre());
+                                    JSONObject mensaje = new JSONObject();
+                                    mensaje.put("type","notifyReady" );
+                                    mensaje.put("producto", commandProduct.getProducte().getNombre());
+                                    broadcast(mensaje.toString());
                                 }
                             }
 
@@ -218,6 +222,10 @@ public class Main extends WebSocketServer {
                                     // Verificar si el estado ahora es "listo"
                                     if ("listo".equals(nextProductEstado)) {
                                         System.out.println("Producto listo: " + commandProductName); 
+                                        JSONObject mensaje = new JSONObject();
+                                        mensaje.put("type","notifyReady" );
+                                        mensaje.put("producto", commandProduct.getProducte().getNombre());
+                                        broadcast(mensaje.toString());
                                     }
 
                                     System.out.println("Se cambió el estado del producto '" + commandProductName + "' a '" + nextProductEstado + "' en la comanda " + numTableProductDone);
@@ -277,10 +285,10 @@ public class Main extends WebSocketServer {
                         // Si la comanda no existe, creamos una nueva
                         System.out.println("Creando nueva comanda...");
                         ClientFX clientFX = getClientById(comandaObj.getJSONObject("clientFX").getString("id"));
-                        if (clientFX == null) {
+                        /*if (clientFX == null) {
                             System.err.println("Cliente no encontrado para la comanda.");
                             break;
-                        }
+                        }*/
 
                         Comanda newComanda = new Comanda(comandaNumber, comandaObj.getInt("clientsNumber"), clientFX);
                         newComanda.setEstado(comandaObj.getString("estado"));
@@ -560,7 +568,7 @@ public class Main extends WebSocketServer {
             productObj.getJSONObject("producte").getString("tags")
         );
         CommandProduct commandProduct = new CommandProduct(product);
-        commandProduct.setComentario(productObj.getString("comentario"));
+        //commandProduct.setComentario(productObj.getString("comentario"));
         commandProduct.setEstado(productObj.getString("estado"));
         return commandProduct;
     }
