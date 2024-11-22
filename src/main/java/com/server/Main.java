@@ -2,6 +2,7 @@ package com.server;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import com.objects.CommandProduct;
 import com.objects.Product;
 import com.objects.SSHMySQLConnection;
 import com.objects.base64Transform;
+import com.objects.CommandDAO;
 
 public class Main extends WebSocketServer {
 
@@ -50,13 +52,26 @@ public class Main extends WebSocketServer {
         clients.add(new ClientFX("responsable", "01", "01"));
         comands = new ArrayList<>();
 
-        addCommand();
+        // addCommand();
 
-        productList = loadProducts();
+        // productList = loadProducts();
 
-        dataConnection = new SSHMySQLConnection();
+        // dataConnection = new SSHMySQLConnection();
 
-        dataConnection.connect();
+        // dataConnection.connect();
+
+        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
+            pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
+
+            CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
+
+        Connection conn = CommandDAO.DBConnect(CommandDAO.DB_URL);
+        CommandDAO.saveNewCommand(conn, addCommandTESTDANI());
+        CommandDAO.updateCommand(conn, addCommandTESTDANIDOS());
+        CommandDAO.updateCommandDetails(conn, addCommandTESTDANIDOS(), commandPizza1);
+        CommandDAO.updateCommandStatus(conn,addCommandTESTDANIDOS(), "listo");
+        CommandDAO.updateProductStatus(conn, addCommandTESTDANIDOS(), "listo", commandPizza1);
+
     }
 
     @Override
@@ -733,5 +748,50 @@ public class Main extends WebSocketServer {
         for (Comanda comanda : comands) {
             System.out.println(comanda.toString());
         }
+    }    
+
+
+    public static Comanda addCommandTESTDANI() {
+        // Crear la primera comanda
+        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
+        pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        Product spaghettiCarbonara = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "");
+        spaghettiCarbonara.addTags(List.of("Italian", "Pasta", "caliente"));
+        
+        CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti1 = new CommandProduct(spaghettiCarbonara);
+        CommandProduct commandPizza2 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti2 = new CommandProduct(spaghettiCarbonara);
+        CommandProduct commandPizza3 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti3 = new CommandProduct(spaghettiCarbonara);
+        
+        Comanda comanda1 = new Comanda(1, 6, new ClientFX("Pedro", "3", "987"));
+        comanda1.addProducts(List.of(commandPizza1, commandSpaghetti1, commandPizza2, commandSpaghetti2, commandPizza3, commandSpaghetti3));
+        
+        return comanda1;
+        
+    }    
+
+    public static Comanda addCommandTESTDANIDOS() {
+        // Crear la primera comanda
+        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
+        pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        Product spaghettiCarbonara = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "");
+        spaghettiCarbonara.addTags(List.of("Italian", "Pasta", "caliente"));
+        
+        CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti1 = new CommandProduct(spaghettiCarbonara);
+        CommandProduct commandPizza2 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti2 = new CommandProduct(spaghettiCarbonara);
+        CommandProduct commandPizza3 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti3 = new CommandProduct(spaghettiCarbonara);
+        
+        Comanda comanda1 = new Comanda(1, 6, new ClientFX("Daniel", "2", "321"));
+        comanda1.addProducts(List.of(commandPizza1, commandSpaghetti1, commandPizza2, commandSpaghetti2, commandPizza3, commandSpaghetti3));
+        
+        return comanda1;
+        
     }    
 }

@@ -13,10 +13,8 @@ public class CommandDAO {
 
     private List<Comanda> comands;
      
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/barretina";
+    public static final String DB_URL = "jdbc:mysql://localhost:3306/barretina";
 
-    
-    
         public static void main(String[] args) {
 
 
@@ -27,11 +25,11 @@ public class CommandDAO {
 
             Connection conn = DBConnect(DB_URL);
 
-            // saveNewCommand(conn, addCommand());
-            // updateCommand(conn, addCommand());
-            // updateCommandDetails(conn, addCommand(), commandPizza1);
-            // updateProductStatus(conn, addCommand(), "listo", commandPizza1);
-            // updateCommandStatus(conn, addCommand(), "listo");
+            saveNewCommand(conn, addCommand());
+            updateCommand(conn, addCommand());
+            updateCommandDetails(conn, addCommand(), commandPizza1);
+            updateProductStatus(conn, addCommand(), "listo", commandPizza1);
+            updateCommandStatus(conn, addCommand(), "listo");
             System.out.println(checkMostSelledProducts(conn));
 
     }
@@ -39,7 +37,8 @@ public class CommandDAO {
     /* FUNCION PARA ESTABLECER LA CONEXION A LA BASE DE DATOS */
 
     public static Connection DBConnect(String url){
-        String user = "daniel",password = "P@ssw0rd";
+        // String user = "daniel",password = "P@ssw0rd";
+        String user = "admin", password = "admin";
         try {
             Connection conn = DriverManager.getConnection(DB_URL, user, password);
             System.out.println("CONECTION SUCCESSFUL");
@@ -129,7 +128,6 @@ public class CommandDAO {
     /* FUNCION PARA ACTUALIZAR UNA COMANDA YA EXISTENTE */
 
     public static void updateCommand(Connection conn, Comanda comanda){
-
         Integer commandId = 0;
 
         String checkCommandId = "SELECT id FROM comanda " + 
