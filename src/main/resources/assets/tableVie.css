@@ -1,0 +1,56 @@
+/* Estilo general para el TableView */
+#commandProductsTable {
+    -fx-background-color: #F9F9F9; /* Fondo de la tabla */
+    -fx-border-color: #D1D1D1; /* Color del borde de la tabla */
+    -fx-border-width: 1px;
+}
+
+/* Estilo de las cabeceras de las columnas */
+#commandProductsTable .column-header {
+    -fx-background-color: #A69286; /* Fondo de la cabecera */
+    -fx-text-fill: white; /* Color del texto en las cabeceras */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER; /* Centrar el texto de la cabecera */
+}
+
+/* Estilo para las celdas de la tabla */
+#commandProductsTable .table-cell {
+    -fx-background-color: #FFFFFF; /* Fondo blanco para las celdas */
+    -fx-text-fill: #000000; /* Color de texto negro */
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER; /* Centrar el texto en las celdas */
+    -fx-padding: 5px;
+}
+
+/* Estilo para la columna de casillas de verificación (checkbox) */
+#checkColumn .table-cell {
+    -fx-alignment: CENTER; /* Centrar las casillas de verificación */
+}
+
+/* Estilo cuando el mouse pasa sobre una fila */
+#commandProductsTable .table-row-cell:hover {
+    -fx-background-color: #D1D1D1; /* Color de fondo al pasar el mouse */
+}
+
+/* Estilo para filas seleccionadas */
+#commandProductsTable .table-row-cell:selected {
+    -fx-background-color: #A69286; /* Fondo de fila seleccionada */
+    -fx-text-fill: white; /* Color de texto blanco */
+}
+
+/* Estilo para las celdas de la columna de productos */
+#productColumn .table-cell {
+    -fx-alignment: CENTER; /* Centrar el texto en la columna de productos */
+    -fx-padding: 5px;
+}
+
+/* Estilo para las celdas de la columna de casillas de verificación */
+#checkColumn .table-cell {
+    -fx-alignment: CENTER; /* Centrado para las casillas */
+}
+
+/* Estilo de la tabla cuando está vacía */
+#commandProductsTable:empty {
+    -fx-background-color: #F0F0F0; /* Fondo más suave cuando la tabla está vacía */
+}

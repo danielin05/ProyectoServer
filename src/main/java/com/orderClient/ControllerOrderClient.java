@@ -5,16 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< Updated upstream
-import org.json.JSONObject;
-
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
-=======
-import com.objects.Comanda;
-import com.objects.CommandProduct;
-import com.objects.UtilsViews;
->>>>>>> Stashed changes
+import com.Objects.UtilsViews;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -283,7 +276,7 @@ public class ControllerOrderClient {
                     Main.stage.hide();
                     Main.stage.setMaximized(true);
                     System.out.println("se cambia la interfaz a comanda detallada");
-                    UtilsViews.cambiarFrame(Main.stage, "/assets/layout_kitchenClient.fxml");
+                    UtilsViews.cambiarFrame(Main.stage, "/assets/layout_commandDetails.fxml");
                 });
 
             }

@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.4" prefWidth="1550.4" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orderClient.ControllerOrderClient">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.4" prefWidth="1550.4" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.orderClient.ControllerDetailsOrder">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: A69286; -fx-border-color: black;">
          <children>
@@ -27,7 +27,7 @@
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" smooth="false">
                      <image>
-                        <Image url="@/images/off.png" />
+                        <Image url="@/images/atras.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -59,27 +59,27 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Text>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Demanat">
+                        <Button fx:id="marcarDemanat" mnemonicParsing="false" onAction="#marcarDemanat" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Demanat">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Pendent">
+                        <Button fx:id="marcarPendent" mnemonicParsing="false" onAction="#marcarPendent" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Pendent">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Llest">
+                        <Button fx:id="marcarLlest" mnemonicParsing="false" onAction="#marcarLlest" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Llest">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Seleccionar Tots">
+                        <Button fx:id="seleccionarTots" mnemonicParsing="false" onAction="#seleccionarTots" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Seleccionar Tots">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Desmarcar Tots">
+                        <Button fx:id="desmarcarTots" mnemonicParsing="false" onAction="#desmarcarTots" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Desmarcar Tots">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
@@ -109,12 +109,12 @@
                            <children>
                               <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="318.0" GridPane.rowIndex="2">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" stylesheets="@bttuon2.css" text="Paga Fraccionada">
+                                    <Button fx:id="pagaFraccionada" mnemonicParsing="false" onAction="#pagaFraccionada" prefHeight="30.0" prefWidth="150.0" stylesheets="@bttuon2.css" text="Paga Fraccionada">
                                        <HBox.margin>
                                           <Insets right="30.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" stylesheets="@bttuon2.css" text="Pagar Tot">
+                                    <Button fx:id="pagarTot" mnemonicParsing="false" onAction="#pagarTot" prefHeight="30.0" prefWidth="100.0" stylesheets="@bttuon2.css" text="Pagar Tot">
                                        <HBox.margin>
                                           <Insets right="15.0" />
                                        </HBox.margin>
@@ -146,12 +146,12 @@
                      </GridPane.margin>
                      <children>
                         <Pane prefHeight="75.0" prefWidth="200.0" />
-                        <ScrollPane hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="532.0" prefWidth="416.0" vbarPolicy="ALWAYS">
+                        <ScrollPane hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="532.0" prefWidth="416.0" stylesheets="@tableVie.css" vbarPolicy="ALWAYS">
                            <content>
-                              <TableView maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="528.0" prefWidth="402.0">
+                              <TableView fx:id="commandProductsTable" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="528.0" prefWidth="402.0">
                                 <columns>
-                                  <TableColumn prefWidth="350.0" text="Producte Comanda" />
-                                  <TableColumn prefWidth="52.0" text="Marcar" />
+                                  <TableColumn fx:id="productColumn" prefWidth="300.0" text="Producte Comanda" />
+                                  <TableColumn fx:id="checkColumn" prefWidth="100.0" text="Marcar" />
                                 </columns>
                               </TableView>
                            </content>

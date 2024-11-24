@@ -2,7 +2,6 @@ package com.server;
 
 import java.io.File;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +28,6 @@ import com.Objects.ClientFX;
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
-import com.Objects.SSHMySQLConnection;
 import com.Objects.base64Transform;
 
 public class Main extends WebSocketServer {
