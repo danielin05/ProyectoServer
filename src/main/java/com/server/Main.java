@@ -40,7 +40,7 @@ public class Main extends WebSocketServer {
     private List<Comanda> comands;
 
     private static JSONArray productList;
-    private static SSHMySQLConnection dataConnection;
+    //private static SSHMySQLConnection dataConnection;
 
     public Main(InetSocketAddress address) {
         super(address);
@@ -54,9 +54,9 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
-        dataConnection = new SSHMySQLConnection();
+        //dataConnection = new SSHMySQLConnection();
 
-        dataConnection.connect();
+        //dataConnection.connect();
     }
 
     @Override
@@ -307,7 +307,7 @@ public class Main extends WebSocketServer {
 
                         comands.add(newComanda);
 
-                        saveComanda(newComanda);
+                        //saveComanda(newComanda);
 
                         // Enviar actualización a todos los clientes
                         broadcast(loadCommandsData());
@@ -593,7 +593,7 @@ public class Main extends WebSocketServer {
         return null;
     }
 
-    private boolean saveComanda(Comanda comanda) {
+    /*private boolean saveComanda(Comanda comanda) {
         try {
             // Iniciar transacción manualmente
             dataConnection.executeUpdate("START TRANSACTION");
@@ -648,15 +648,15 @@ public class Main extends WebSocketServer {
             }
             return false;
         }
-    }
+    }*/
 
-    private double calculateTotalPrice(Comanda comanda) {
+    /*private double calculateTotalPrice(Comanda comanda) {
         double total = 0.0;
         for (CommandProduct product : comanda.getProducts()) {
             total += Double.parseDouble(product.getProducte().getPreu());
         }
         return total;
-    }
+    }*/
 
     public void addCommand() {
         // Crear la primera comanda

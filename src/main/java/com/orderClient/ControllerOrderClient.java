@@ -5,14 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< Updated upstream
 import org.json.JSONObject;
 
 import com.Objects.Comanda;
 import com.Objects.CommandProduct;
+=======
+import com.objects.Comanda;
+import com.objects.CommandProduct;
+import com.objects.UtilsViews;
+>>>>>>> Stashed changes
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -51,6 +58,8 @@ public class ControllerOrderClient {
     private Button atrasButton;
 
     private Map<Canvas, List<CommandArea>> commandAreasByCanvas = new HashMap<>();
+
+    public static Comanda selectedComanda;
 
     @FXML
     private void apagarButton(ActionEvent event) {
@@ -125,7 +134,6 @@ public class ControllerOrderClient {
     
         GraphicsContext gc = canvas.getGraphicsContext2D();
     
-        // Limpiamos todo el canvas, ya que las posiciones pueden cambiar
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     
         List<CommandArea> commandAreas = new ArrayList<>();
@@ -151,20 +159,18 @@ public class ControllerOrderClient {
     
             Map<String, Map<String, Integer>> productGroups = agruparProductosPorEstado(comanda);
     
-            // Calcula tamaño del rectángulo de comanda
             double rectHeight = 50 + productGroups.size() * 45;
     
             // Asegúrate de que no se solapen las comandas, actualizando las posiciones
             if (y + rectHeight > canvas.getHeight()) {
-                x += rectWidth + padding;  // Mover a la siguiente columna
-                y = padding;  // Volver a la parte superior
+                x += rectWidth + padding;
+                y = padding;
                 if (x + rectWidth > canvas.getWidth()) {
                     System.out.println("Advertencia: No caben más columnas en el canvas.");
                     return;
                 }
             }
     
-            // Dibuja el fondo de la comanda
             gc.setFill(Color.LIGHTGRAY);
             gc.fillRect(x, y, rectWidth, rectHeight);
     
@@ -198,10 +204,6 @@ public class ControllerOrderClient {
     
                     gc.setFill(Color.BLACK);
                     gc.fillText(count + "x " + productName + " (" + state + ")", x + 15, productY + 30);
-    
-                    CommandProductArea productArea = new CommandProductArea(
-                            x + 5, productY, rectWidth - 10, 40, state, count, productName, comanda);
-                    comandaArea.products.add(productArea);
     
                     productY += 45;
                 }
@@ -275,61 +277,22 @@ public class ControllerOrderClient {
 
         for (CommandArea commandArea : commandAreas) {
             if (commandArea.contains(clickX, clickY)) {
-                if (commandArea.containsTitle(clickX, clickY)) {
-                    System.out.println("Se hizo clic en el título de la comanda: " + commandArea.comanda.getNumber());
-                    sendCommandSelect(commandArea.comanda.getNumber());
-                } else {
-                    for (CommandProductArea productArea : commandArea.products) {
-                        if (productArea.contains(clickX, clickY)) {
-                            System.out.println("Se hizo clic en el producto: " + productArea.name + " (" + productArea.state + ")");
-                            sendCommandProductSelect(commandArea.comanda.getNumber(), productArea.name);
-                            return;
-                        }
-                    }
-                }
+                System.out.println("Se hizo clic la comanda: " + commandArea.comanda.getNumber());
+                selectedComanda = commandArea.comanda;
+                Platform.runLater(() -> {
+                    Main.stage.hide();
+                    Main.stage.setMaximized(true);
+                    System.out.println("se cambia la interfaz a comanda detallada");
+                    UtilsViews.cambiarFrame(Main.stage, "/assets/layout_kitchenClient.fxml");
+                });
+
             }
-        }
-    }
-
-    private void sendCommandProductSelect(int commandTable, String productName) {
-        try {
-            JSONObject message = new JSONObject();
-            message.put("type", "product_select");
-            message.put("table", commandTable);
-            message.put("product", productName);
-
-            sendToServer(message.toString());
-            System.out.println("Mensaje enviado al servidor: " + message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendCommandSelect(int commandTable) {
-        try {
-            JSONObject message = new JSONObject();
-            message.put("type", "command_select");
-            message.put("table", commandTable);
-
-            sendToServer(message.toString());
-            System.out.println("Mensaje enviado al servidor: " + message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendToServer(String message) {
-        if (Main.clienteWebSocket != null && Main.clienteWebSocket.isOpen()) {
-            Main.clienteWebSocket.send(message);
-        } else {
-            System.err.println("WebSocket no está conectado.");
         }
     }
 
     static class CommandArea {
         double x, y, width, height;
         Comanda comanda;
-        List<CommandProductArea> products = new ArrayList<>();
 
         CommandArea(double x, double y, double width, double height, Comanda comanda) {
             this.x = x;
@@ -345,28 +308,6 @@ public class ControllerOrderClient {
 
         boolean containsTitle(double clickX, double clickY) {
             return contains(clickX, clickY) && clickY <= y + 40;
-        }
-    }
-
-    static class CommandProductArea {
-        double x, y, width, height;
-        String state, name;
-        int count;
-        Comanda comanda;
-
-        CommandProductArea(double x, double y, double width, double height, String state, int count, String name, Comanda comanda) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.state = state;
-            this.name = name;
-            this.count = count;
-            this.comanda = comanda;
-        }
-
-        boolean contains(double clickX, double clickY) {
-            return clickX >= x && clickX <= x + width && clickY >= y && clickY <= y + height;
         }
     }
 }
