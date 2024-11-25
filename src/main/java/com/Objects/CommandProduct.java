@@ -17,7 +17,7 @@ public class CommandProduct {
     // Constructor
     public CommandProduct(Product producte) {
         this.producte = producte;
-        this.estado = ESTADOS.get(0);  // Estado inicial: "demanat"
+        this.estado = ESTADOS.get(0);  // Estado inicial: "pedido"
         this.comentario = null;
         this.selected = new SimpleBooleanProperty(false);  // Inicializa la propiedad selected como false
     }

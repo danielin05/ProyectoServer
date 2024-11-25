@@ -286,12 +286,29 @@ public class Main extends WebSocketServer {
                         System.out.println("Comanda ya existe, agregando productos...");
                         JSONArray productsList = comandaObj.getJSONArray("productsList");
 
+                        existingComanda.getProducts();
+
                         List<CommandProduct> newProducts = new ArrayList<>();
 
+                        // Convertir los productos nuevos a objetos CommandProduct
                         for (int i = 0; i < productsList.length(); i++) {
                             JSONObject productObj = productsList.getJSONObject(i);
                             CommandProduct commandProduct = createCommandProductFromJson(productObj);
                             newProducts.add(commandProduct);
+                        }
+
+                        // Usamos un Iterator para eliminar de manera segura productos en newProducts
+                        Iterator<CommandProduct> iterator = newProducts.iterator();
+                        while (iterator.hasNext()) {
+                            CommandProduct productoNuevo = iterator.next();
+                            for (CommandProduct producto : existingComanda.getProducts()) {
+                                // Comparamos los productos por el nombre
+                                if (producto.getProducte().getNombre().equals(productoNuevo.getProducte().getNombre())) {
+                                    // Si el producto ya está en existingComanda, lo eliminamos de newProducts
+                                    iterator.remove();
+                                    break; // Salimos del bucle, ya no es necesario seguir comparando
+                                }
+                            }
                         }
 
                         existingComanda.addProducts(newProducts);

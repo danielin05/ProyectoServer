@@ -211,7 +211,7 @@ public class ControllerOrderClient {
     private Color getColorByState(String state) {
         switch (state) {
             case "pedido":
-                return Color.LIGHTBLUE;
+                return Color.web("F6FAEB");
             case "pendiente":
                 return Color.YELLOW;
             case "listo":
@@ -239,7 +239,7 @@ public class ControllerOrderClient {
             }
     
             if (productEstado.equals("pedido")) {
-                estado = "pedido"; // Si hay un producto "demanat" y no hay "pendiente", será "demanat"
+                estado = "pedido"; // Si hay un producto "pedido" y no hay "pendiente", será "pedido"
             }
         }
     

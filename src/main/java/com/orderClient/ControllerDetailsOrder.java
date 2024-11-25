@@ -32,13 +32,13 @@ public class ControllerDetailsOrder {
 
     private ObservableList<CommandProduct> productsList = FXCollections.observableArrayList();
 
-    // Método para manejar el botón "Marcar Demanat"
+    // Método para manejar el botón "Marcar pedido"
     @FXML
-    private void marcarDemanat(ActionEvent event) {
-        System.out.println("Se pulsó el botón Marcar Demanat");
+    private void marcarPedido(ActionEvent event) {
+        System.out.println("Se pulsó el botón Marcar pedido");
         for (CommandProduct product : productsList) {
             if (product.isSelected()) { // Solo cambia los productos que están seleccionados
-                product.setEstado("pedido"); // Actualiza el estado a "Demanat"
+                product.setEstado("pedido"); // Actualiza el estado a "pedido"
                     JSONObject obj = new JSONObject();
                     obj.put("type", "changeStatus");
                     obj.put("newStatus", "pedido");
@@ -203,16 +203,16 @@ public class ControllerDetailsOrder {
                         // Asignamos un color de fondo según el estado del producto
                         switch (product.getEstado().toLowerCase()) {
                             case "pedido":
-                                setStyle("-fx-background-color: gray;"); // Gris para pedido
+                                setStyle("-fx-background-color: F6FAEB;"); // Gris para pedido
                                 break;
                             case "pendiente":
                                 setStyle("-fx-background-color: yellow;"); // Amarillo para pendiente
                                 break;
                             case "listo":
-                                setStyle("-fx-background-color: green;"); // Verde para listo
+                                setStyle("-fx-background-color: lightgreen;"); // Verde para listo
                                 break;
                             case "pagado":
-                                setStyle("-fx-background-color: black; -fx-text-fill: white;"); // Negro para pagado (con texto blanco)
+                                setStyle("-fx-background-color: A0A0A0; -fx-text-fill: white;"); // Negro para pagado (con texto blanco)
                                 break;
                             default:
                                 setStyle(""); // Sin color si no se encuentra el estado
@@ -238,16 +238,16 @@ public class ControllerDetailsOrder {
                         // Asignamos un color de fondo según el estado del producto en la columna del CheckBox
                         switch (product.getEstado().toLowerCase()) {
                             case "pedido":
-                                setStyle("-fx-background-color: gray;"); // Gris para pedido
+                                setStyle("-fx-background-color: F6FAEB;"); // Gris para pedido
                                 break;
                             case "pendiente":
                                 setStyle("-fx-background-color: yellow;"); // Amarillo para pendiente
                                 break;
                             case "listo":
-                                setStyle("-fx-background-color: green;"); // Verde para listo
+                                setStyle("-fx-background-color: lightgreen;"); // Verde para listo
                                 break;
                             case "pagado":
-                                setStyle("-fx-background-color: black; -fx-text-fill: white;"); // Negro para pagado (con texto blanco)
+                                setStyle("-fx-background-color: A0A0A0; -fx-text-fill: white;"); // Negro para pagado (con texto blanco)
                                 break;
                             default:
                                 setStyle(""); // Sin color si no se encuentra el estado

@@ -59,7 +59,7 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </Text>
-                        <Button fx:id="marcarDemanat" mnemonicParsing="false" onAction="#marcarDemanat" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Demanat">
+                        <Button fx:id="marcarPedido" mnemonicParsing="false" onAction="#marcarPedido" prefHeight="40.0" prefWidth="200.0" stylesheets="@bttuon2.css" text="Marcar Pedido">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
@@ -169,7 +169,7 @@
                   <Insets bottom="5.0" right="10.0" top="5.0" />
                </HBox.margin>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Demanat">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pedido">
                      <font>
                         <Font name="Microsoft YaHei" size="20.0" />
                      </font>
