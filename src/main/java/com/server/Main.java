@@ -58,7 +58,7 @@ public class Main extends WebSocketServer {
         clients.add(new ClientFX("responsable", "01", "01"));
         comands = new ArrayList<>();
 
-        addCommand();
+        //addCommand();
 
         productList = loadProducts();
 
