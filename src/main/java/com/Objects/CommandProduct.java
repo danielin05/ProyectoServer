@@ -12,7 +12,7 @@ public class CommandProduct {
     private String comentario;
     private BooleanProperty selected;  // Cambiado de boolean a BooleanProperty
 
-    private static final List<String> ESTADOS = List.of("demanat", "pendiente", "listo", "pagado");
+    private static final List<String> ESTADOS = List.of("pedido", "pendiente", "listo", "pagado");
 
     // Constructor
     public CommandProduct(Product producte) {

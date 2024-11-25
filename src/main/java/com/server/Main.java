@@ -2,6 +2,7 @@ package com.server;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.Objects.Comanda;
 import com.Objects.CommandProduct;
 import com.Objects.Product;
 import com.Objects.base64Transform;
+import com.Objects.CommandDAO;
 
 public class Main extends WebSocketServer {
 
@@ -37,11 +39,17 @@ public class Main extends WebSocketServer {
     private List<ClientFX> clients;
     private List<Comanda> comands;
 
+    private static Connection connection;
+
     private static JSONArray productList;
     //private static SSHMySQLConnection dataConnection;
 
     public Main(InetSocketAddress address) {
+
         super(address);
+
+        connection = CommandDAO.DBConnect(CommandDAO.DB_URL);
+
         webSockets = new ArrayList<>();
         currentClients = new ArrayList<>();
         clients = new ArrayList<>();
@@ -243,10 +251,24 @@ public class Main extends WebSocketServer {
                             break;
                         }
                     }
+                
+                    case "changeStatus":
+                    // Implementación para manejar el mensaje "reload"
+                    System.out.println("Mensaje recibido: changeStatus");
 
-                    if (!comandaFound) {
-                        System.err.println("Comanda no encontrada para la mesa " + numTableProductDone);
-                    }
+                    String newStatus = obj.getString("newStatus");
+                    String nombre = obj.getString("nombre");
+                    String preu = obj.getString("preu");
+                    String descripcion = obj.getString("descripción");
+                    String actualStatus = obj.getString("actualStatus");
+                    int comand = obj.getInt("comand");
+
+                    Product product = new Product(nombre, preu, descripcion, null);
+                    CommandProduct changingCommandProduct = new CommandProduct(product);
+                    changingCommandProduct.setEstado(actualStatus);
+
+                    CommandDAO.updateProductStatus(connection, comand, newStatus, changingCommandProduct);
+                    
                     break;
 
                 case "addCommand":
@@ -455,7 +477,7 @@ public class Main extends WebSocketServer {
         }        
     } 
 
-    private static final List<String> ESTADOS = List.of("demanat", "pendiente", "listo", "pagado");
+    private static final List<String> ESTADOS = List.of("pedido", "pendiente", "listo", "pagado");
 
     private String getNextEstado(String currentEstado) {
         int index = ESTADOS.indexOf(currentEstado);
@@ -490,7 +512,7 @@ public class Main extends WebSocketServer {
         } else if (allPendiente) {
             comanda.setEstado("pendiente");
         } else {
-            comanda.setEstado("demanat");
+            comanda.setEstado("pedido");
         }
     
         System.out.println("Estado actualizado de la comanda " + comanda.getNumber() + " a '" + comanda.getEstado() + "'");

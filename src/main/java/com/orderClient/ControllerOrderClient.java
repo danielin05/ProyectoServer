@@ -210,7 +210,7 @@ public class ControllerOrderClient {
 
     private Color getColorByState(String state) {
         switch (state) {
-            case "demanat":
+            case "pedido":
                 return Color.LIGHTBLUE;
             case "pendiente":
                 return Color.YELLOW;
@@ -238,8 +238,8 @@ public class ControllerOrderClient {
                 return "pendiente"; // Prioridad máxima: si hay un producto pendiente, el estado de la comanda es "pendiente"
             }
     
-            if (productEstado.equals("demanat")) {
-                estado = "demanat"; // Si hay un producto "demanat" y no hay "pendiente", será "demanat"
+            if (productEstado.equals("pedido")) {
+                estado = "pedido"; // Si hay un producto "demanat" y no hay "pendiente", será "demanat"
             }
         }
     

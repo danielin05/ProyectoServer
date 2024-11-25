@@ -5,7 +5,6 @@ import com.Objects.UtilsViews;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -15,6 +14,10 @@ import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+
+import org.json.JSONObject;
+
+import com.Objects.CommandDAO;
 
 public class ControllerDetailsOrder {
 
@@ -35,7 +38,16 @@ public class ControllerDetailsOrder {
         System.out.println("Se pulsó el botón Marcar Demanat");
         for (CommandProduct product : productsList) {
             if (product.isSelected()) { // Solo cambia los productos que están seleccionados
-                product.setEstado("demanat"); // Actualiza el estado a "Demanat"
+                product.setEstado("pedido"); // Actualiza el estado a "Demanat"
+                    JSONObject obj = new JSONObject();
+                    obj.put("type", "changeStatus");
+                    obj.put("newStatus", "pedido");
+                    obj.put("nombre", product.getProducte().getNombre());
+                    obj.put("preu", product.getProducte().getPreu());
+                    obj.put("descripción", product.getProducte().getDescription());
+                    obj.put("actualStatus", product.getEstado());
+                    obj.put("comand", ControllerOrderClient.selectedComanda.getNumber());
+                    Main.clienteWebSocket.send(obj.toString());
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
@@ -47,7 +59,16 @@ public class ControllerDetailsOrder {
         System.out.println("Se pulsó el botón Marcar Pendent");
         for (CommandProduct product : productsList) {
             if (product.isSelected()) {
-                product.setEstado("pendiente"); // Actualiza el estado a "Pendent"
+                product.setEstado("pendiente"); // Actualiza el estado a "Pendent" 
+                JSONObject obj = new JSONObject();
+                obj.put("type", "changeStatus");
+                obj.put("newStatus", "pendiente");
+                obj.put("nombre", product.getProducte().getNombre());
+                obj.put("preu", product.getProducte().getPreu());
+                obj.put("descripción", product.getProducte().getDescription());
+                obj.put("actualStatus", product.getEstado());
+                obj.put("comand", ControllerOrderClient.selectedComanda.getNumber());
+                Main.clienteWebSocket.send(obj.toString());
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
@@ -59,7 +80,16 @@ public class ControllerDetailsOrder {
         System.out.println("Se pulsó el botón Marcar Llest");
         for (CommandProduct product : productsList) {
             if (product.isSelected()) {
-                product.setEstado("listo"); // Actualiza el estado a "Llest"
+                product.setEstado("listo"); // Actualiza el estado a "Pendent" 
+                JSONObject obj = new JSONObject();
+                obj.put("type", "changeStatus");
+                obj.put("newStatus", "listo");
+                obj.put("nombre", product.getProducte().getNombre());
+                obj.put("preu", product.getProducte().getPreu());
+                obj.put("descripción", product.getProducte().getDescription());
+                obj.put("actualStatus", product.getEstado());
+                obj.put("comand", ControllerOrderClient.selectedComanda.getNumber());
+                Main.clienteWebSocket.send(obj.toString());
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
@@ -102,7 +132,16 @@ public class ControllerDetailsOrder {
         // Recorremos solo los productos seleccionados y los marcamos como pagados
         for (CommandProduct product : productsList) {
             if (product.isSelected()) { // Solo los productos seleccionados
-                product.setEstado("Pagado"); // Cambia el estado a "Pagado"
+                product.setEstado("pagado"); // Cambia el estado a "Pagado"
+                JSONObject obj = new JSONObject();
+                obj.put("type", "changeStatus");
+                obj.put("newStatus", "pagado");
+                obj.put("nombre", product.getProducte().getNombre());
+                obj.put("preu", product.getProducte().getPreu());
+                obj.put("descripción", product.getProducte().getDescription());
+                obj.put("actualStatus", product.getEstado());
+                obj.put("comand", ControllerOrderClient.selectedComanda.getNumber());
+                Main.clienteWebSocket.send(obj.toString());
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
@@ -115,8 +154,17 @@ public class ControllerDetailsOrder {
 
         // Recorremos todos los productos y los marcamos como pagados
         for (CommandProduct product : productsList) {
-            product.setEstado("Pagado"); // Cambia el estado a "Pagado"
+            product.setEstado("pagado"); // Cambia el estado a "Pagado"
             product.setSelected(false);  // Opcionalmente, desmarcar los productos
+            JSONObject obj = new JSONObject();
+                obj.put("type", "changeStatus");
+                obj.put("newStatus", "pagado");
+                obj.put("nombre", product.getProducte().getNombre());
+                obj.put("preu", product.getProducte().getPreu());
+                obj.put("descripción", product.getProducte().getDescription());
+                obj.put("actualStatus", product.getEstado());
+                obj.put("comand", ControllerOrderClient.selectedComanda.getNumber());
+                Main.clienteWebSocket.send(obj.toString());
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
     }
@@ -154,7 +202,7 @@ public class ControllerDetailsOrder {
                     if (product != null) {
                         // Asignamos un color de fondo según el estado del producto
                         switch (product.getEstado().toLowerCase()) {
-                            case "demanat":
+                            case "pedido":
                                 setStyle("-fx-background-color: gray;"); // Gris para pedido
                                 break;
                             case "pendiente":
@@ -189,7 +237,7 @@ public class ControllerDetailsOrder {
                     if (product != null) {
                         // Asignamos un color de fondo según el estado del producto en la columna del CheckBox
                         switch (product.getEstado().toLowerCase()) {
-                            case "demanat":
+                            case "pedido":
                                 setStyle("-fx-background-color: gray;"); // Gris para pedido
                                 break;
                             case "pendiente":
