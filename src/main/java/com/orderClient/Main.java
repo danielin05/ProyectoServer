@@ -30,15 +30,12 @@ public class Main extends Application {
 
     public static WebSocketClient clienteWebSocket;
     public static Map<String,List<Comanda>> comandsByTag; 
-    public static Map<String,Integer> ranking;
     public static Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
 
         comandsByTag = new HashMap<>();
-
-        ranking = new HashMap<>();
 
         Main.stage = stage;
         
@@ -173,24 +170,6 @@ public class Main extends Application {
                             comandsByTag.put("frio", orderCommandsByTag(comands, "frio"));
                             comandsByTag.put("postre", orderCommandsByTag(comands, "postre"));
 
-                        } else if ("ranking".equals(type)) {
-                            System.out.println(message);
-
-                            JSONArray jsonArray = obj.getJSONArray("products");
-
-                            for (Object i : jsonArray) {
-                                // Convertir el objeto i a un JSONObject (cada elemento en el JSONArray es un JSONObject)
-                                JSONObject product = (JSONObject) i;
-                            
-                                // Obtener el nombre del producto y las ventas del producto
-                                String productName = product.getString("productName");
-                                int sales = product.getInt("sales");
-                            
-                                // Agregar el producto al Map con el nombre del producto como clave y las ventas como valor
-                                ranking.put(productName, sales);
-
-                                System.out.println(ranking);
-                            }
                         }
                     }                    
                 }
