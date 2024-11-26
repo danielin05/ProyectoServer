@@ -55,6 +55,14 @@ public class ControllerOrderClient {
     public static Comanda selectedComanda;
 
     @FXML
+<<<<<<< HEAD
+=======
+    private void podioProductos(ActionEvent event) {
+        System.out.println("Se pulsó el botón podioProductos");
+    }
+
+    @FXML
+>>>>>>> parent of 7cda9fa (ranking)
     private void apagarButton(ActionEvent event) {
         System.out.println("Se pulsó el botón apagar");
         Main.stage.close();

@@ -299,7 +299,18 @@ public class Main extends WebSocketServer {
             if (currentQuantity > newQuantity) {
                 int toRemove = currentQuantity - newQuantity;
                 for (int i = 0; i < toRemove; i++) {
+<<<<<<< HEAD
                     existingComanda.getProducts().removeIf(product -> product.getProducte().getNombre().equals(productName));
+=======
+                    Iterator<CommandProduct> iterator = existingComanda.getProducts().iterator();
+                    while (iterator.hasNext()) {
+                        CommandProduct product = iterator.next();
+                        if (product.getProducte().getNombre().equals(productName)) {
+                            iterator.remove();
+                            break;
+                        }
+                    }
+>>>>>>> parent of 7cda9fa (ranking)
                 }
             }
         }
