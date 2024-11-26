@@ -296,30 +296,36 @@ public class ControllerDetailsOrder {
         });
 
         imageColumn.setCellFactory(param -> new TableCell<CommandProduct, String>() {
-        @Override
-        protected void updateItem(String base64Image, boolean empty) {
-            super.updateItem(base64Image, empty);
-            if (empty || base64Image == null || base64Image.isEmpty()) {
-                setGraphic(null); // Limpiar contenido si no hay imagen
-            } else {
-                try {
-                    // Decodificar la imagen Base64
-                    byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
-                    javafx.scene.image.Image image = new javafx.scene.image.Image(new ByteArrayInputStream(imageBytes));
-                    
-                    // Crear un ImageView y establecer la imagen
-                    ImageView imageView = new ImageView(image);
-                    imageView.setFitWidth(50); // Ajusta el ancho deseado
-                    imageView.setFitHeight(50); // Ajusta el alto deseado
-                    imageView.setPreserveRatio(true); // Mantener la proporción de la imagen
-                    
-                    setGraphic(imageView); // Añadir el ImageView a la celda
-                } catch (IllegalArgumentException e) {
-                    setGraphic(null);
+            @Override
+            protected void updateItem(String base64Image, boolean empty) {
+                super.updateItem(base64Image, empty);
+                if (empty || base64Image == null || base64Image.isEmpty()) {
+                    setGraphic(null); // Limpiar contenido si no hay imagen
+                } else {
+                    try {
+                        System.out.println(base64Image);
+                        // Quitar el prefijo "data:image/png;base64," si está presente
+                        if (base64Image.startsWith("data:image")) {
+                            base64Image = base64Image.substring(base64Image.indexOf(",") + 1);
+                        }
+        
+                        // Decodificar la imagen Base64
+                        byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
+                        javafx.scene.image.Image image = new javafx.scene.image.Image(new ByteArrayInputStream(imageBytes));
+        
+                        // Crear un ImageView para mostrar la imagen
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(50); // Ajustar el ancho deseado
+                        imageView.setFitHeight(50); // Ajustar el alto deseado
+                        imageView.setPreserveRatio(true); // Mantener la proporción
+        
+                        setGraphic(imageView); // Añadir el ImageView a la celda
+                    } catch (IllegalArgumentException e) {
+                        setGraphic(null); // En caso de error al decodificar, limpiar la celda
+                    }
                 }
             }
-        }
-    });
+        });
 
         // Usamos un TableCell personalizado para la columna CheckBox y cambiar su fondo según el estado
         checkColumn.setCellFactory(param -> new TableCell<CommandProduct, Boolean>() {

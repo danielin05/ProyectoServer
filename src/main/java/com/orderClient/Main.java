@@ -105,8 +105,6 @@ public class Main extends Application {
                         String type = obj.getString("type");
                     
                         if ("comandsData".equals(type)) {
-
-                            System.out.println(message);
                     
                             JSONArray comandsArray = obj.getJSONArray("list");
                             System.out.println(comandsArray.toString());
@@ -141,8 +139,6 @@ public class Main extends Application {
                                         productObject.getString("imatge")
                                     );
 
-                                    System.out.println(product.getImageBase64());
-
                                     product.setDescription(productObject.optString("description", ""));
                     
                                     List<String> tags = new ArrayList<>();
@@ -174,7 +170,6 @@ public class Main extends Application {
                             comandsByTag.put("frio", orderCommandsByTag(comands, "frio"));
                             comandsByTag.put("postre", orderCommandsByTag(comands, "postre"));
 
-                            System.out.println(comandsByTag);
                         }
                     }                    
                 }
