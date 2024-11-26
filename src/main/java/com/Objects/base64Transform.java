@@ -1,6 +1,7 @@
 package com.Objects;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Base64;
 
 public class base64Transform {
@@ -8,15 +9,25 @@ public class base64Transform {
     /**
      * Convierte una imagen de un archivo a una cadena Base64 con un prefijo para su uso en OllamaIA.
      * 
-     * @param imagePath La ruta del archivo de imagen que se desea convertir.
+     * @param imagePath La ruta del archivo de imagen que se desea convertir (debe incluir el subdirectorio si está en uno).
      * @return Una cadena en Base64 que representa la imagen, o null si hubo un error.
      */
     public static String convertImageToBase64(String imagePath) {
-        // Usamos el class loader para obtener el archivo dentro del JAR
+        // Asegúrate de que la ruta incluye el subdirectorio correcto dentro del JAR
+        URL resourceUrl = base64Transform.class.getClassLoader().getResource(imagePath);
+
+        // Imprime la ruta del recurso
+        if (resourceUrl != null) {
+            System.out.println("Buscando imagen en: " + resourceUrl.toString());
+        } else {
+            System.out.println("No se encontró el recurso: " + imagePath);
+        }
+
+        // Intentamos abrir el recurso como un InputStream
         InputStream inputStream = base64Transform.class.getClassLoader().getResourceAsStream(imagePath);
-        
+
         if (inputStream == null) {
-            System.out.println("No se pudo encontrar la imagen: " + imagePath);
+            System.out.println("No se pudo encontrar la imagen en el flujo de entrada: " + imagePath);
             return null;
         }
 
@@ -25,7 +36,7 @@ public class base64Transform {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[1024];
             int bytesRead;
-            
+
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
             }
@@ -33,12 +44,13 @@ public class base64Transform {
             // Convertimos la imagen a Base64
             byte[] imageBytes = byteArrayOutputStream.toByteArray();
             base64String = Base64.getEncoder().encodeToString(imageBytes);
-            
+
             // Definimos el tipo de imagen (esto puede cambiar dependiendo del tipo de imagen)
-            String imageType = "image/png";  // Cambiar si el tipo de imagen es diferente
+            String imageType = "image/png"; // Cambiar si el tipo de imagen es diferente
             base64String = "data:" + imageType + ";base64," + base64String;
 
         } catch (IOException e) {
+            System.err.println("Error al leer el archivo de imagen: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -58,7 +70,7 @@ public class base64Transform {
             if (base64String.contains(",")) {
                 base64String = base64String.split(",")[1];
             }
-    
+
             byte[] imageBytes = Base64.getDecoder().decode(base64String);
 
             // Creamos el directorio de salida si no existe
@@ -68,7 +80,7 @@ public class base64Transform {
             }
 
             String outputPath = rutaSalida + File.separator + nombre;
-    
+
             try (FileOutputStream fos = new FileOutputStream(outputPath)) {
                 fos.write(imageBytes);
                 System.out.println("Imagen guardada en: " + outputPath);

@@ -486,7 +486,7 @@ public class Main extends WebSocketServer {
                     
                     if (imageInputStream != null) {
                         // Convertir la imagen a base64 (aquí puedes usar tu método base64Transform.convertImageToBase64)
-                        String base64ImageString = base64Transform.convertImageToBase64(imageFileName);
+                        String base64ImageString = base64Transform.convertImageToBase64("productImages/" + imageFileName);
                         product.put("imatge", base64ImageString);
                         
                         // Si también necesitas guardar la imagen en el disco, puedes hacerlo:
