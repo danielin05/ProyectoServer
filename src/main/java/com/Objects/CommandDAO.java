@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandDAO {
-
-    private List<Comanda> comands;
      
     public static final String DB_URL = "jdbc:mysql://localhost:3306/barretina";
 

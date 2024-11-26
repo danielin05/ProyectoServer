@@ -1,6 +1,7 @@
 package com.orderClient;
 
 import com.Objects.CommandProduct;
+import com.Objects.Product;
 import com.Objects.UtilsViews;
 
 import javafx.event.ActionEvent;
@@ -9,6 +10,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.text.Text;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.application.Platform;
@@ -27,6 +29,30 @@ public class ControllerDetailsOrder {
 
     @FXML
     private TableColumn<CommandProduct, Boolean> checkColumn;
+
+    @FXML
+    private Text numTaula;
+
+    @FXML
+    private Text cambrerTaula;
+
+    @FXML
+    private Text productosTotales;
+
+    @FXML
+    private Text totalComanda;
+
+    @FXML
+    private Text subtotalComanda;
+
+    @FXML
+    private Text subtotalProductossNoPagados;
+
+    @FXML
+    private Text personasMesa;
+
+    @FXML
+    private Text subtotalPorComensaal;
 
     private ObservableList<CommandProduct> productsList = FXCollections.observableArrayList();
 
@@ -49,6 +75,10 @@ public class ControllerDetailsOrder {
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
+
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
     }
 
     // Método para manejar el botón "Marcar Pendent"
@@ -70,8 +100,11 @@ public class ControllerDetailsOrder {
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
-    }
 
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
+    }
 
     @FXML
     private void marcarLlest(ActionEvent event) {
@@ -91,6 +124,10 @@ public class ControllerDetailsOrder {
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
+
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
     }
 
     @FXML
@@ -143,6 +180,10 @@ public class ControllerDetailsOrder {
             }
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
+
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
     }
     
 
@@ -165,11 +206,33 @@ public class ControllerDetailsOrder {
                 Main.clienteWebSocket.send(obj.toString());
         }
         commandProductsTable.refresh(); // Refresca la tabla para mostrar los cambios
+
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
     }
 
 
     @FXML
     public void initialize() {
+
+        numTaula.setText("Número de la taula: " + ControllerOrderClient.selectedComanda.getNumber());
+
+        cambrerTaula.setText("Cambrer asignat: " + ControllerOrderClient.selectedComanda.getClientFX().getNombre());
+
+        productosTotales.setText("Número de productes totals: " + ControllerOrderClient.selectedComanda.getProducts().size());
+
+        actualizarTotalComanda();
+
+        actualizarSubtotalComanda();
+
+        actualizarSubtotalSinPagar();
+
+        actualizarSubtotalPorComensal();
+
+        personasMesa.setText("Número de comensales: " + ControllerOrderClient.selectedComanda.getClientsNumber());
+        
+
         // Suponiendo que tienes una lista de productos en ControllerOrderClient.selectedComanda
         // Aquí agregamos los productos al ObservableList
         productsList = FXCollections.observableArrayList(ControllerOrderClient.selectedComanda.getProducts());
@@ -265,10 +328,74 @@ public class ControllerDetailsOrder {
                     });
                     setGraphic(checkBox);
                 }
+                actualizarSubtotalComanda();
+
+                actualizarSubtotalPorComensal();
             }
         });
 
         // Asignar los datos a la TableView
         commandProductsTable.setItems(productsList);
+    }
+
+        // Método para calcular el precio total de la comanda
+    private double calcularTotalComanda() {
+        double total = 0.0;
+        
+        // Iterar sobre la lista de productos de la comanda
+        for (CommandProduct product : ControllerOrderClient.selectedComanda.getProducts()) {
+            total += Double.valueOf(product.getProducte().getPreu());  // Sumar el precio de cada producto
+        }
+        
+        return total;
+    }
+
+    // Método para actualizar el total de la comanda en la interfaz
+    private void actualizarTotalComanda() {
+        double total = calcularTotalComanda();
+        totalComanda.setText("Total de la comanda: " + String.format("%.2f", total));
+    }
+
+    // Método para calcular el precio de los productos seleccionados
+    private double calcularTotalSeleccionados() {
+        double subtotal = 0.0;
+        
+        // Iterar sobre los productos y sumar solo los seleccionados
+        for (CommandProduct product : productsList) {
+            if (product.isSelected()) {
+                subtotal += Double.valueOf(product.getProducte().getPreu());  // Sumar el precio de los productos seleccionados
+            }
+        }
+        
+        return subtotal;
+    }
+
+    // Método para actualizar el subtotal de los productos seleccionados en la interfaz
+    private void actualizarSubtotalComanda() {
+        double subtotal = calcularTotalSeleccionados();
+        subtotalComanda.setText("Subtotal de los productos seleccionados: " + String.format("%.2f", subtotal));
+    }
+
+    private double calcularTotalComandaSinPagar() {
+        double total = 0.0;
+        
+        // Iterar sobre la lista de productos de la comanda
+        for (CommandProduct product : ControllerOrderClient.selectedComanda.getProducts()) {
+            if (!product.getEstado().equals("pagado")) {
+                total += Double.valueOf(product.getProducte().getPreu());  // Sumar el precio de cada producto
+            }
+        }
+        
+        return total;
+    }
+
+    private void actualizarSubtotalSinPagar() {
+        double total = calcularTotalComandaSinPagar();
+        subtotalProductossNoPagados.setText("Subtotal de no pagados: " + String.format("%.2f", total));
+    }
+
+    private void actualizarSubtotalPorComensal() {
+        double total = calcularTotalComandaSinPagar() / ControllerOrderClient.selectedComanda.getClientsNumber();
+        subtotalPorComensaal.setText("Subtotal por comensal: " + String.format("%.2f", total));
     }
 }

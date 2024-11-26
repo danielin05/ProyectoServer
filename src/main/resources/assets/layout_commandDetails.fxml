@@ -113,6 +113,9 @@
                                        <HBox.margin>
                                           <Insets right="30.0" />
                                        </HBox.margin>
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="15.0" />
+                                       </font>
                                     </Button>
                                     <Button fx:id="pagarTot" mnemonicParsing="false" onAction="#pagarTot" prefHeight="30.0" prefWidth="100.0" stylesheets="@bttuon2.css" text="Pagar Tot">
                                        <HBox.margin>
@@ -124,17 +127,73 @@
                                     <Insets bottom="10.0" top="10.0" />
                                  </GridPane.margin>
                               </HBox>
-                              <VBox prefHeight="100.0" prefWidth="307.0">
+                              <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="307.0">
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Taula número: " />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cambrer encarregat" />
+                                    <Text fx:id="numTaula" strokeType="OUTSIDE" strokeWidth="0.0" text="Taula número: ">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="15.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin></Text>
+                                    <Text fx:id="cambrerTaula" strokeType="OUTSIDE" strokeWidth="0.0" text="Cambrer encarregat">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="15.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin></Text>
+                                    <Text fx:id="personasMesa" strokeType="OUTSIDE" strokeWidth="0.0" text="Cambrer encarregat">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="15.0" />
+                                       </font>
+                                    </Text>
                                  </children>
+                                 <padding>
+                                    <Insets left="15.0" />
+                                 </padding>
                               </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                              <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                                  <children>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Productos totales" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total" />
+                                    <Text fx:id="productosTotales" strokeType="OUTSIDE" strokeWidth="0.0" text="Productos totales">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="12.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin></Text>
+                                    <Text fx:id="totalComanda" strokeType="OUTSIDE" strokeWidth="0.0" text="Total">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="12.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin></Text>
+                                    <Text fx:id="subtotalComanda" strokeType="OUTSIDE" strokeWidth="0.0" text="Total">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="12.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
+                                    </Text>
+                                    <Text fx:id="subtotalProductossNoPagados" strokeType="OUTSIDE" strokeWidth="0.0" text="Subtotal">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="12.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
+                                    </Text>
+                                    <Text fx:id="subtotalPorComensaal" strokeType="OUTSIDE" strokeWidth="0.0" text="TotalPorComensal">
+                                       <font>
+                                          <Font name="Microsoft YaHei" size="12.0" />
+                                       </font>
+                                    </Text>
                                  </children>
+                                 <padding>
+                                    <Insets left="15.0" />
+                                 </padding>
                               </VBox>
                            </children>
                         </GridPane>

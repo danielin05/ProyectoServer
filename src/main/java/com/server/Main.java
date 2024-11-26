@@ -58,7 +58,7 @@ public class Main extends WebSocketServer {
         clients.add(new ClientFX("responsable", "01", "01"));
         comands = new ArrayList<>();
 
-        //addCommand();
+        addCommand();
 
         productList = loadProducts();
 
@@ -160,99 +160,6 @@ public class Main extends WebSocketServer {
 
                     broadcast(loadClientsData());
                     break;
-
-                case "command_select":
-                    int numTable = obj.getInt("table");
-
-                    for (Comanda comanda : comands) {
-                        if (comanda.getNumber() == numTable) {
-                            String currentEstado = comanda.getEstado();
-                            String nextEstado = getNextEstado(currentEstado);
-
-                            if (nextEstado == null) {
-                                System.err.println("No hay un siguiente estado para la comanda " + numTable);
-                                break;
-                            }
-
-                            // Cambiar el estado de todos los productos al siguiente estado
-                            for (CommandProduct commandProduct : comanda.getProducts()) {
-                                commandProduct.setEstado(nextEstado);
-                                if ("listo".equals(nextEstado)) {
-                                    System.out.println("Producto listo: " + commandProduct.getProducte().getNombre());
-                                    JSONObject mensaje = new JSONObject();
-                                    mensaje.put("type","notifyReady" );
-                                    mensaje.put("producto", commandProduct.getProducte().getNombre());
-                                    broadcast(mensaje.toString());
-                                }
-                            }
-
-                            // Cambiar el estado de la comanda al siguiente estado
-                            comanda.setEstado(nextEstado);
-                            System.out.println(comanda.getEstado());
-                            System.out.println("Se cambió el estado de la comanda " + numTable + " a '" + nextEstado + "'");
-
-                            // Enviar actualización a todos los clientes
-                            broadcast(loadCommandsData());
-                            break;
-                        }
-                    }
-                    break;
-
-                case "product_select":
-                    System.out.println(message.toString());
-
-                    // Obtener datos del mensaje
-                    int numTableProductDone = obj.getInt("table");
-                    String commandProductName = obj.getString("product");
-
-                    boolean comandaFound = false;
-
-                    for (Comanda comanda : comands) {
-                        if (comanda.getNumber() == numTableProductDone) {
-                            comandaFound = true;
-
-                            boolean productUpdated = false;
-
-                            for (CommandProduct commandProduct : comanda.getProducts()) {
-                                if (commandProduct.getProducte().getNombre().equals(commandProductName)) {
-                                    String currentProductEstado = commandProduct.getEstado();
-                                    String nextProductEstado = getNextEstado(currentProductEstado);
-
-                                    if (nextProductEstado == null) {
-                                        System.err.println("El producto '" + commandProductName + "' ya está en el último estado.");
-                                        break;
-                                    }
-
-                                    // Cambiar el estado del producto al siguiente
-                                    commandProduct.setEstado(nextProductEstado);
-                                    productUpdated = true;
-
-                                    // Verificar si el estado ahora es "listo"
-                                    if ("listo".equals(nextProductEstado)) {
-                                        System.out.println("Producto listo: " + commandProductName); 
-                                        JSONObject mensaje = new JSONObject();
-                                        mensaje.put("type","notifyReady" );
-                                        mensaje.put("producto", commandProduct.getProducte().getNombre());
-                                        broadcast(mensaje.toString());
-                                    }
-
-                                    System.out.println("Se cambió el estado del producto '" + commandProductName + "' a '" + nextProductEstado + "' en la comanda " + numTableProductDone);
-                                    break;
-                                }
-                            }
-
-                            if (!productUpdated) {
-                                System.err.println("Producto '" + commandProductName + "' no encontrado o ya estaba en el último estado en la comanda " + numTableProductDone);
-                            }
-
-                            // Verificar y actualizar el estado de la comanda
-                            updateComandaEstado(comanda);
-
-                            // Enviar actualización a todos los clientes
-                            broadcast(loadCommandsData());
-                            break;
-                        }
-                    }
                 
                 case "changeStatus":
                     // Implementación para manejar el mensaje "reload"
@@ -532,16 +439,6 @@ public class Main extends WebSocketServer {
         }        
     } 
 
-    private static final List<String> ESTADOS = List.of("pedido", "pendiente", "listo", "pagado");
-
-    private String getNextEstado(String currentEstado) {
-        int index = ESTADOS.indexOf(currentEstado);
-        if (index == -1 || index == ESTADOS.size() - 1) {
-            return null; // No hay siguiente estado
-        }
-        return ESTADOS.get(index + 1);
-    }
-
     private void updateComandaEstado(Comanda comanda) {
         boolean allPendiente = true;
         boolean allListo = true;
@@ -667,4 +564,81 @@ public class Main extends WebSocketServer {
         }
         return null;
     }
+
+    public void addCommand() {
+        // Crear la primera comanda
+        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
+        pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        Product spaghettiCarbonara = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "");
+        spaghettiCarbonara.addTags(List.of("Italian", "Pasta", "caliente"));
+        
+        CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
+        CommandProduct commandSpaghetti1 = new CommandProduct(spaghettiCarbonara);
+        
+        Comanda comanda1 = new Comanda(1, 2, new ClientFX("001", "Alice", "001"));
+        comanda1.addProducts(List.of(commandPizza1, commandSpaghetti1));
+        comands.add(comanda1);
+        
+        // Crear la segunda comanda
+        Product caesarSalad = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "");
+        caesarSalad.addTags(List.of("Salad", "Vegetarian", "frio"));
+        
+        Product margheritaPizza = new Product("Margherita Pizza", "9.00", "Tomato, mozzarella, and fresh basil", "");
+        margheritaPizza.addTags(List.of("Italian", "Vegetarian", "caliente"));
+        
+        CommandProduct commandSalad2 = new CommandProduct(caesarSalad);
+        CommandProduct commandPizza2 = new CommandProduct(margheritaPizza);
+        
+        Comanda comanda2 = new Comanda(2, 3, new ClientFX("002", "Bob", "002"));
+        comanda2.addProducts(List.of(commandSalad2, commandPizza2));
+        comands.add(comanda2);
+        
+        // Crear la tercera comanda
+        Product lasagna = new Product("Lasagna", "12.00", "Layers of pasta with cheese, beef, and tomato sauce", "");
+        lasagna.addTags(List.of("Italian", "caliente"));
+        
+        Product garlicBread = new Product("Garlic Bread", "4.00", "Crispy bread with garlic and butter", "");
+        garlicBread.addTags(List.of("Appetizer", "caliente"));
+        
+        CommandProduct commandLasagna3 = new CommandProduct(lasagna);
+        CommandProduct commandGarlicBread3 = new CommandProduct(garlicBread);
+        
+        Comanda comanda3 = new Comanda(3, 1, new ClientFX("003", "Charlie", "003"));
+        comanda3.addProducts(List.of(commandLasagna3, commandGarlicBread3));
+        comands.add(comanda3);
+        
+        // Crear la cuarta comanda
+        Product sushiRoll = new Product("Sushi Roll", "15.00", "Sushi with tuna, avocado, and cucumber", "");
+        sushiRoll.addTags(List.of("Japanese", "Seafood", "frio"));
+        
+        Product misoSoup = new Product("Miso Soup", "6.00", "Traditional Japanese soup with tofu and seaweed", "");
+        misoSoup.addTags(List.of("Japanese", "Soup", "caliente"));
+        
+        CommandProduct commandSushi4 = new CommandProduct(sushiRoll);
+        CommandProduct commandMisoSoup4 = new CommandProduct(misoSoup);
+        
+        Comanda comanda4 = new Comanda(4, 4, new ClientFX("004", "David", "004"));
+        comanda4.addProducts(List.of(commandSushi4, commandMisoSoup4));
+        comands.add(comanda4);
+        
+        // Crear la quinta comanda
+        Product hamburger = new Product("Hamburger", "10.50", "Beef patty, lettuce, tomato, and cheese", "");
+        hamburger.addTags(List.of("Fast Food", "Beef", "caliente"));
+        
+        Product frenchFries = new Product("French Fries", "3.50", "Crispy fried potatoes", "");
+        frenchFries.addTags(List.of("Side Dish", "caliente"));
+        
+        CommandProduct commandBurger5 = new CommandProduct(hamburger);
+        CommandProduct commandFries5 = new CommandProduct(frenchFries);
+        
+        Comanda comanda5 = new Comanda(5, 5, new ClientFX("005", "Eve", "005"));
+        comanda5.addProducts(List.of(commandBurger5, commandFries5));
+        comands.add(comanda5);
+        
+        // Imprimir todas las comandas añadidas
+        for (Comanda comanda : comands) {
+            System.out.println(comanda.toString());
+        }
+    }  
 }
