@@ -17,8 +17,6 @@ import javafx.beans.property.SimpleStringProperty;
 
 import org.json.JSONObject;
 
-import com.Objects.CommandDAO;
-
 public class ControllerDetailsOrder {
 
     @FXML

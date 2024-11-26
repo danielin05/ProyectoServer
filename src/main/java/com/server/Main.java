@@ -273,7 +273,7 @@ public class Main extends WebSocketServer {
                     
                     break;
                 
-                    case "addCommand":
+                case "addCommand":
 
                     System.out.println("Mensaje recibido: addCommand");
                 
@@ -281,16 +281,11 @@ public class Main extends WebSocketServer {
                         // Extraemos la comanda y productos del mensaje
                         JSONObject comandaObj = obj.getJSONObject("comanda");
                         int comandaNumber = comandaObj.getInt("number");
+
+                        JSONObject cliente = comandaObj.getJSONObject("clientFX");
                 
-                        // Buscar o crear cliente asociado
-                        ClientFX clientFX = null;
-                        if (comandaObj.has("clientFX")) {
-                            clientFX = getClientById(comandaObj.getJSONObject("clientFX").getString("id"));
-                            if (clientFX == null) {
-                                System.err.println("Cliente no encontrado para la comanda.");
-                                break;
-                            }
-                        }
+                        //Crear cliente
+                        ClientFX clientFX = new ClientFX(cliente.getString("nombre"), cliente.getString("id"), cliente.getString("password"));
                 
                         // Buscar si la comanda ya existe
                         Comanda existingComanda = getComandaByNumber(comandaNumber);
@@ -672,146 +667,4 @@ public class Main extends WebSocketServer {
         }
         return null;
     }
-
-    /*private boolean saveComanda(Comanda comanda) {
-        try {
-            // Iniciar transacción manualmente
-            dataConnection.executeUpdate("START TRANSACTION");
-
-            // Insertar la comanda en la tabla "comanda"
-            String insertComandaSQL = String.format(
-                "INSERT INTO comanda (id_camarero, num_mesa, clientes, estado, precio_total) " +
-                "VALUES (%d, %d, %d, '%s', %.2f)",
-                Integer.parseInt(comanda.getClientFX().getId()),  // ID del camarero
-                comanda.getNumber(),  // Número de mesa
-                comanda.getClientsNumber(),  // Número de clientes
-                comanda.getEstado(),  // Estado de la comanda
-                calculateTotalPrice(comanda) // Precio total de la comanda
-            );
-
-            int comandaId = dataConnection.executeUpdate(insertComandaSQL);
-            if (comandaId <= 0) {
-                dataConnection.executeUpdate("ROLLBACK");
-                throw new SQLException("Fallo al insertar la comanda.");
-            }
-
-            // Insertar productos en la tabla "detalle_comanda"
-            for (CommandProduct product : comanda.getProducts()) {
-                String insertDetalleSQL = String.format(
-                    "INSERT INTO detalle_comanda (id_comanda, nombre_producto, descripcion_producto, precio_producto, estado_producto) " +
-                    "VALUES (%d, '%s', '%s', %.2f, '%s')",
-                    comandaId,  // ID de la comanda
-                    product.getProducte().getNombre(),  // Nombre del producto
-                    product.getProducte().getDescription(),  // Descripción del producto
-                    Double.parseDouble(product.getProducte().getPreu()),  // Precio del producto
-                    product.getEstado()  // Estado del producto
-                );
-
-                int detalleResult = dataConnection.executeUpdate(insertDetalleSQL);
-                if (detalleResult <= 0) {
-                    dataConnection.executeUpdate("ROLLBACK");
-                    throw new SQLException("Fallo al insertar detalle de la comanda.");
-                }
-            }
-
-            // Confirmar la transacción
-            dataConnection.executeUpdate("COMMIT");
-            System.out.println("Comanda guardada exitosamente.");
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                dataConnection.executeUpdate("ROLLBACK");
-            } catch (Exception rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-            return false;
-        }
-    }*/
-
-    /*private double calculateTotalPrice(Comanda comanda) {
-        double total = 0.0;
-        for (CommandProduct product : comanda.getProducts()) {
-            total += Double.parseDouble(product.getProducte().getPreu());
-        }
-        return total;
-    }*/
-
-    public void addCommand() {
-        // Crear la primera comanda
-        Product pizzaMargherita = new Product("Pizza Margherita", "8.50", "Tomato, mozzarella, and basil", "");
-        pizzaMargherita.addTags(List.of("Italian", "Vegetarian", "caliente"));
-        
-        Product spaghettiCarbonara = new Product("Spaghetti Carbonara", "10.00", "Pasta with eggs, cheese, pancetta", "");
-        spaghettiCarbonara.addTags(List.of("Italian", "Pasta", "caliente"));
-        
-        CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
-        CommandProduct commandSpaghetti1 = new CommandProduct(spaghettiCarbonara);
-        
-        Comanda comanda1 = new Comanda(1, 2, new ClientFX("001", "Alice", "001"));
-        comanda1.addProducts(List.of(commandPizza1, commandSpaghetti1));
-        comands.add(comanda1);
-        
-        // Crear la segunda comanda
-        Product caesarSalad = new Product("Caesar Salad", "5.50", "Lettuce, croutons, Caesar dressing", "");
-        caesarSalad.addTags(List.of("Salad", "Vegetarian", "frio"));
-        
-        Product margheritaPizza = new Product("Margherita Pizza", "9.00", "Tomato, mozzarella, and fresh basil", "");
-        margheritaPizza.addTags(List.of("Italian", "Vegetarian", "caliente"));
-        
-        CommandProduct commandSalad2 = new CommandProduct(caesarSalad);
-        CommandProduct commandPizza2 = new CommandProduct(margheritaPizza);
-        
-        Comanda comanda2 = new Comanda(2, 3, new ClientFX("002", "Bob", "002"));
-        comanda2.addProducts(List.of(commandSalad2, commandPizza2));
-        comands.add(comanda2);
-        
-        // Crear la tercera comanda
-        Product lasagna = new Product("Lasagna", "12.00", "Layers of pasta with cheese, beef, and tomato sauce", "");
-        lasagna.addTags(List.of("Italian", "caliente"));
-        
-        Product garlicBread = new Product("Garlic Bread", "4.00", "Crispy bread with garlic and butter", "");
-        garlicBread.addTags(List.of("Appetizer", "caliente"));
-        
-        CommandProduct commandLasagna3 = new CommandProduct(lasagna);
-        CommandProduct commandGarlicBread3 = new CommandProduct(garlicBread);
-        
-        Comanda comanda3 = new Comanda(3, 1, new ClientFX("003", "Charlie", "003"));
-        comanda3.addProducts(List.of(commandLasagna3, commandGarlicBread3));
-        comands.add(comanda3);
-        
-        // Crear la cuarta comanda
-        Product sushiRoll = new Product("Sushi Roll", "15.00", "Sushi with tuna, avocado, and cucumber", "");
-        sushiRoll.addTags(List.of("Japanese", "Seafood", "frio"));
-        
-        Product misoSoup = new Product("Miso Soup", "6.00", "Traditional Japanese soup with tofu and seaweed", "");
-        misoSoup.addTags(List.of("Japanese", "Soup", "caliente"));
-        
-        CommandProduct commandSushi4 = new CommandProduct(sushiRoll);
-        CommandProduct commandMisoSoup4 = new CommandProduct(misoSoup);
-        
-        Comanda comanda4 = new Comanda(4, 4, new ClientFX("004", "David", "004"));
-        comanda4.addProducts(List.of(commandSushi4, commandMisoSoup4));
-        comands.add(comanda4);
-        
-        // Crear la quinta comanda
-        Product hamburger = new Product("Hamburger", "10.50", "Beef patty, lettuce, tomato, and cheese", "");
-        hamburger.addTags(List.of("Fast Food", "Beef", "caliente"));
-        
-        Product frenchFries = new Product("French Fries", "3.50", "Crispy fried potatoes", "");
-        frenchFries.addTags(List.of("Side Dish", "caliente"));
-        
-        CommandProduct commandBurger5 = new CommandProduct(hamburger);
-        CommandProduct commandFries5 = new CommandProduct(frenchFries);
-        
-        Comanda comanda5 = new Comanda(5, 5, new ClientFX("005", "Eve", "005"));
-        comanda5.addProducts(List.of(commandBurger5, commandFries5));
-        comands.add(comanda5);
-        
-        // Imprimir todas las comandas añadidas
-        for (Comanda comanda : comands) {
-            System.out.println(comanda.toString());
-        }
-    }    
 }
