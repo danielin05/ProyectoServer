@@ -62,6 +62,8 @@ public class Main extends WebSocketServer {
 
         productList = loadProducts();
 
+        System.out.println(loadProducts());
+
         //dataConnection = new SSHMySQLConnection();
 
         //dataConnection.connect();
