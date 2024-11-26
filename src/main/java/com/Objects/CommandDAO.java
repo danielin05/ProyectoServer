@@ -25,7 +25,7 @@ public class CommandDAO {
 
             saveNewCommand(conn, addCommand());
             updateCommand(conn, addCommand());
-            updateCommandDetails(conn, addCommand(), commandPizza1);
+            updateCommandDetails(conn, addCommand(), commandPizza1, "add");
             updateProductStatus(conn, addCommand().getNumber(), "listo", commandPizza1);
             updateCommandStatus(conn, addCommand(), "listo");
             System.out.println(checkMostSelledProducts(conn));
@@ -168,7 +168,7 @@ public class CommandDAO {
         } 
     }
 
-    public static void updateCommandDetails(Connection conn, Comanda comanda, CommandProduct producto){
+    public static void updateCommandDetails(Connection conn, Comanda comanda, CommandProduct producto, String action){
 
         comanda.addProducts(List.of(producto));
 
@@ -179,8 +179,10 @@ public class CommandDAO {
         String checkCommandId = "SELECT id FROM comanda " + 
                                 "WHERE num_mesa = ? AND estado <> 'pagado';"; 
 
-        String updateCommandProducts = "INSERT INTO detalle_comanda(id_comanda, nombre_producto, descripcion_producto, precio_producto, estado_producto) " +
+        String insertCommandProducts = "INSERT INTO detalle_comanda(id_comanda, nombre_producto, descripcion_producto, precio_producto, estado_producto) " +
         "VALUES(?, ?, ?, ?, ?);";
+
+        String deleteCommandProducts = "DELETE FROM detalle_comanda WHERE id_comanda = ? AND nombre_producto = ? AND estado_producto = 'pedido' LIMIT 1;";
 
         try (PreparedStatement pstmt = conn.prepareStatement(checkCommandId)) {
 
@@ -198,21 +200,32 @@ public class CommandDAO {
             System.out.println("Esta comanda no existe " + e.getMessage());
         }
 
+        if(action.equals("add")){
+            try (PreparedStatement pstmt = conn.prepareStatement(insertCommandProducts)) {
+                pstmt.setInt(1, commandId);                                               // ID de la comanda
+                pstmt.setString(2, producto.getProducte().getNombre());                   // Nombre del producto
+                pstmt.setString(3, producto.getProducte().getDescription());              // Descripcion del producto
+                pstmt.setDouble(4, Double.parseDouble(producto.getProducte().getPreu())); // Precio del producto
+                pstmt.setString(5, producto.getEstado());                                 // Estado del producto
 
-        try (PreparedStatement pstmt = conn.prepareStatement(updateCommandProducts)) {
-            pstmt.setInt(1, commandId);                                               // ID de la comanda
-            pstmt.setString(2, producto.getProducte().getNombre());                   // Nombre del producto
-            pstmt.setString(3, producto.getProducte().getDescription());              // Descripcion del producto
-            pstmt.setDouble(4, Double.parseDouble(producto.getProducte().getPreu())); // Precio del producto
-            pstmt.setString(5, producto.getEstado());                                 // Estado del producto
+                pstmt.executeUpdate();
+                System.out.println("SE HAN ACTUALIZADO CORRECTAMENTE LOS DETALLES DE LA COMANDA");
 
-            pstmt.executeUpdate();
-            System.out.println("SE HAN ACTUALIZADO CORRECTAMENTE LOS DETALLES DE LA COMANDA");
+            } catch (NumberFormatException | SQLException e) {
+                e.printStackTrace();
+            }
+        }else if(action.equals("del")){  
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteCommandProducts)) {
+                pstmt.setInt(1, commandId);                                               // ID de la comanda
+                pstmt.setString(2, producto.getProducte().getNombre());                   // Nombre del producto
 
-        } catch (NumberFormatException | SQLException e) {
-            e.printStackTrace();
-        }   
+                pstmt.executeUpdate();
+                System.out.println("SE HAN ACTUALIZADO CORRECTAMENTE LOS DETALLES DE LA COMANDA");
 
+            } catch (NumberFormatException | SQLException e) {
+                e.printStackTrace();
+            }   
+        }
     }
 
     public static void updateCommandStatus(Connection conn, Comanda comanda, String newStatus){

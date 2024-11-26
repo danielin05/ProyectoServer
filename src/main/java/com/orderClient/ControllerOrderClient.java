@@ -60,6 +60,13 @@ public class ControllerOrderClient {
     @FXML
     private void podioProductos(ActionEvent event) {
         System.out.println("Se pulsó el botón podioProductos");
+        //Cambio de interfaz
+        Platform.runLater(() -> {
+            Main.stage.hide();
+            Main.stage.setMaximized(true);
+            System.out.println("se cambia la interfaz a comanda detallada");
+            UtilsViews.cambiarFrame(Main.stage, "/assets/layout_ranking.fxml");
+        });
     }
 
     @FXML
