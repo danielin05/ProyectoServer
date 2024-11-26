@@ -137,7 +137,7 @@ public class Main extends Application {
                                     Product product = new Product(
                                         productObject.getString("nombre"), 
                                         productObject.getString("preu"),
-                                        productObject.getString("descripcio"),
+                                        productObject.getString("description"),
                                         productObject.getString("imatge")
                                     );
 
