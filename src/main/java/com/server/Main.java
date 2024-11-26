@@ -178,6 +178,13 @@ public class Main extends WebSocketServer {
                     CommandProduct changingCommandProduct = new CommandProduct(product);
                     changingCommandProduct.setEstado(actualStatus);
 
+                    if (newStatus.equals("listo")) {
+                        JSONObject notifyMessage = new JSONObject();
+                        notifyMessage.put("type", "notifyReady");
+                        notifyMessage.put("producto", nombre);
+                        broadcast(notifyMessage.toString());
+                    }
+
                     CommandDAO.updateProductStatus(connection, comand, newStatus, changingCommandProduct);
                     
                     break;
@@ -295,17 +302,20 @@ public class Main extends WebSocketServer {
             String productName = entry.getKey();
             int currentQuantity = entry.getValue();
             int newQuantity = newProductCount.getOrDefault(productName, 0);
+
+            System.out.println("Cantidad a remover: " + (currentQuantity - newQuantity));
     
             if (currentQuantity > newQuantity) {
                 int toRemove = currentQuantity - newQuantity;
                 for (int i = 0; i < toRemove; i++) {
-                    // Buscar y eliminar solo un producto que coincida
-                    existingComanda.getProducts().removeIf(product -> {
+                    Iterator<CommandProduct> iterator = existingComanda.getProducts().iterator();
+                    while (iterator.hasNext()) {
+                        CommandProduct product = iterator.next();
                         if (product.getProducte().getNombre().equals(productName)) {
-                            return true; // Eliminar el producto encontrado
+                            iterator.remove();
+                            break;
                         }
-                        return false; // Mantener los demás productos
-                    });
+                    }
                 }
             }  
         }
