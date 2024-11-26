@@ -1,6 +1,7 @@
 package com.server;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -448,13 +449,16 @@ public class Main extends WebSocketServer {
 
     private static JSONArray loadProducts() {
         try {
+            // Acceder al archivo XML dentro del JAR
+            InputStream xmlInputStream = Main.class.getClassLoader().getResourceAsStream("data/products.xml");
+            if (xmlInputStream == null) {
+                System.out.println("No se pudo encontrar el archivo XML dentro del JAR.");
+                return null;
+            }
 
-            String userDir = System.getProperty("user.dir");
-            File archivoXML = new File(userDir + "/src/main/resources/data/products.xml");
-            System.out.println(archivoXML.toPath());
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(archivoXML);
+            Document doc = dBuilder.parse(xmlInputStream);
             doc.getDocumentElement().normalize();
 
             JSONArray productList = new JSONArray();
@@ -475,10 +479,21 @@ public class Main extends WebSocketServer {
                     product.put("nom", elemento.getElementsByTagName("nom").item(0).getTextContent());
                     product.put("preu", elemento.getElementsByTagName("preu").item(0).getTextContent());
                     product.put("descripcio", elemento.getElementsByTagName("descripcio").item(0).getTextContent());
-                    String imageURL = System.getProperty("user.dir") + "\\src\\main\\resources\\productImages\\" + elemento.getElementsByTagName("imatge").item(0).getTextContent();
-                    String base64ImageString = base64Transform.convertImageToBase64(imageURL);
-                    base64Transform.convertirBase64ToImage(base64ImageString, elemento.getElementsByTagName("imatge").item(0).getTextContent(), "src\\main\\resources\\producImagesDecoded");
-                    product.put("imatge", base64ImageString);
+                    
+                    // Acceder a la imagen desde el JAR
+                    String imageFileName = elemento.getElementsByTagName("imatge").item(0).getTextContent();
+                    InputStream imageInputStream = Main.class.getClassLoader().getResourceAsStream("productImages/" + imageFileName);
+                    
+                    if (imageInputStream != null) {
+                        // Convertir la imagen a base64 (aquí puedes usar tu método base64Transform.convertImageToBase64)
+                        String base64ImageString = base64Transform.convertImageToBase64(imageFileName);
+                        product.put("imatge", base64ImageString);
+                        
+                        // Si también necesitas guardar la imagen en el disco, puedes hacerlo:
+                        // convertirBase64ToImage(base64ImageString, imageFileName, "src/main/resources/productImagesDecoded");
+                    } else {
+                        System.out.println("No se pudo encontrar la imagen: " + imageFileName);
+                    }
 
                     productList.put(product);
                 }
@@ -487,9 +502,10 @@ public class Main extends WebSocketServer {
             return productList;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
-        }        
-    } 
+        }
+    }
 
     private void updateComandaEstado(Comanda comanda) {
         boolean allPendiente = true;
