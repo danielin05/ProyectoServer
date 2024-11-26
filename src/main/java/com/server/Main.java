@@ -485,6 +485,7 @@ public class Main extends WebSocketServer {
                         JSONObject productObject = new JSONObject();
                         productObject.put("nombre", commandProduct.getProducte().getNombre());
                         productObject.put("preu", commandProduct.getProducte().getPreu());
+                        productObject.put("imatge", commandProduct.getProducte().getImageBase64());
                         
                         // Verificación para evitar valores nulos
                         String description = commandProduct.getProducte().getDescription();
