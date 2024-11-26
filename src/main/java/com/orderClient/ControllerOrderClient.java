@@ -50,9 +50,24 @@ public class ControllerOrderClient {
     @FXML
     private Button atrasButton;
 
+    @FXML
+    private Button podioProductos;
+
     private Map<Canvas, List<CommandArea>> commandAreasByCanvas = new HashMap<>();
 
     public static Comanda selectedComanda;
+
+    @FXML
+    private void podioProductos(ActionEvent event) {
+        System.out.println("Se pulsó el botón podioProductos");
+        //Cambio de interfaz
+        Platform.runLater(() -> {
+            Main.stage.hide();
+            Main.stage.setMaximized(true);
+            System.out.println("se cambia la interfaz a comanda detallada");
+            UtilsViews.cambiarFrame(Main.stage, "/assets/layout_ranking.fxml");
+        });
+    }
 
     @FXML
     private void apagarButton(ActionEvent event) {

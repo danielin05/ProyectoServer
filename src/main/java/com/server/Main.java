@@ -178,6 +178,13 @@ public class Main extends WebSocketServer {
                     CommandProduct changingCommandProduct = new CommandProduct(product);
                     changingCommandProduct.setEstado(actualStatus);
 
+                    if (newStatus.equals("listo")) {
+                        JSONObject notifyMessage = new JSONObject();
+                        notifyMessage.put("type", "notifyReady");
+                        notifyMessage.put("producto", nombre);
+                        broadcast(notifyMessage.toString());
+                    }
+
                     CommandDAO.updateProductStatus(connection, comand, newStatus, changingCommandProduct);
                     
                     break;
@@ -205,7 +212,7 @@ public class Main extends WebSocketServer {
                 
                             List<CommandProduct> currentProducts = existingComanda.getProducts();
                             JSONArray productsList = comandaObj.getJSONArray("productsList");
-                
+                        
                             List<CommandProduct> newProducts = new ArrayList<>();
                             for (int i = 0; i < productsList.length(); i++) {
                                 JSONObject productObj = productsList.getJSONObject(i);
@@ -247,6 +254,8 @@ public class Main extends WebSocketServer {
                             comands.add(newComanda);
                 
                             System.out.println("Nueva comanda creada: " + newComanda.getNumber());
+
+                            CommandDAO.saveNewCommand(connection, newComanda);
                         }
                 
                         // Guardar cambios y notificar clientes
@@ -256,6 +265,35 @@ public class Main extends WebSocketServer {
                         System.err.println("Error procesando la comanda: " + e.getMessage());
                         e.printStackTrace();
                     }
+
+                    case "getRanking":
+
+                        Map<String, Integer> ranking = CommandDAO.checkMostSelledProducts(connection);
+
+                        JSONObject rankJsonObject = new JSONObject();
+
+                        rankJsonObject.put("type", "ranking");
+
+                        JSONArray productsArray = new JSONArray(); // Crear un arreglo para almacenar los productos
+
+                        for (Map.Entry<String, Integer> entry : ranking.entrySet()) {
+                            // Crear un objeto JSON para cada producto
+                            JSONObject productJson = new JSONObject();
+                            productJson.put("productName", entry.getKey());
+                            productJson.put("sales", entry.getValue());
+
+                            // Agregar el objeto del producto al arreglo
+                            productsArray.put(productJson);
+                        }
+
+                        // Agregar el arreglo de productos al JSON principal
+                        rankJsonObject.put("products", productsArray);
+
+                        // Si necesitas imprimir el JSON resultante
+                        System.out.println(rankJsonObject.toString());
+
+                        conn.send(rankJsonObject.toString());
+
                     break;
                     
 
@@ -285,7 +323,9 @@ public class Main extends WebSocketServer {
             if (newQuantity > currentQuantity) {
                 int toAdd = newQuantity - currentQuantity;
                 for (int i = 0; i < toAdd; i++) {
-                    existingComanda.getProducts().add(new CommandProduct(new Product(productName, "0"))); // Precio predeterminado "0"
+                    CommandProduct newCommandProduct = new CommandProduct(new Product(productName, "0"));
+                    existingComanda.getProducts().add(newCommandProduct); // Precio predeterminado "0"
+                    CommandDAO.updateCommandDetails(connection, existingComanda, newCommandProduct, "add");
                 }
             }
         }
@@ -295,13 +335,23 @@ public class Main extends WebSocketServer {
             String productName = entry.getKey();
             int currentQuantity = entry.getValue();
             int newQuantity = newProductCount.getOrDefault(productName, 0);
+
+            System.out.println("Cantidad a remover: " + (currentQuantity - newQuantity));
     
             if (currentQuantity > newQuantity) {
                 int toRemove = currentQuantity - newQuantity;
                 for (int i = 0; i < toRemove; i++) {
-                    existingComanda.getProducts().removeIf(product -> product.getProducte().getNombre().equals(productName));
+                    Iterator<CommandProduct> iterator = existingComanda.getProducts().iterator();
+                    while (iterator.hasNext()) {
+                        CommandProduct product = iterator.next();
+                        if (product.getProducte().getNombre().equals(productName)) {
+                            CommandDAO.updateCommandDetails(connection, existingComanda, product, "del");
+                            iterator.remove();
+                            break;
+                        }
+                    }
                 }
-            }
+            }  
         }
     }
     
