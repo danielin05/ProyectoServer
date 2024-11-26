@@ -301,9 +301,9 @@ public class ControllerDetailsOrder {
                 super.updateItem(base64Image, empty);
                 if (empty || base64Image == null || base64Image.isEmpty()) {
                     setGraphic(null); // Limpiar contenido si no hay imagen
+                    setStyle(""); // Limpiar estilo
                 } else {
                     try {
-                        System.out.println(base64Image);
                         // Quitar el prefijo "data:image/png;base64," si está presente
                         if (base64Image.startsWith("data:image")) {
                             base64Image = base64Image.substring(base64Image.indexOf(",") + 1);
@@ -323,9 +323,31 @@ public class ControllerDetailsOrder {
                     } catch (IllegalArgumentException e) {
                         setGraphic(null); // En caso de error al decodificar, limpiar la celda
                     }
+        
+                    // Asignar estilo basado en el estado del producto
+                    CommandProduct product = getTableRow().getItem();
+                    if (product != null) {
+                        switch (product.getEstado().toLowerCase()) {
+                            case "pedido":
+                                setStyle("-fx-background-color: F6FAEB;"); // Gris para pedido
+                                break;
+                            case "pendiente":
+                                setStyle("-fx-background-color: yellow;"); // Amarillo para pendiente
+                                break;
+                            case "listo":
+                                setStyle("-fx-background-color: lightgreen;"); // Verde para listo
+                                break;
+                            case "pagado":
+                                setStyle("-fx-background-color: A0A0A0; -fx-text-fill: white;"); // Gris oscuro para pagado
+                                break;
+                            default:
+                                setStyle(""); // Sin color si no coincide
+                                break;
+                        }
+                    }
                 }
             }
-        });
+        });        
 
         // Usamos un TableCell personalizado para la columna CheckBox y cambiar su fondo según el estado
         checkColumn.setCellFactory(param -> new TableCell<CommandProduct, Boolean>() {
