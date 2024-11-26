@@ -537,8 +537,9 @@ public class Main extends WebSocketServer {
             productObj.getJSONObject("producte").getString("nombre"),
             productObj.getJSONObject("producte").getString("preu"),
             productObj.getJSONObject("producte").getString("descripcio"),
-            productObj.getJSONObject("producte").getString("tags")
+            productObj.getJSONObject("producte").getString("imatge")
         );
+
         CommandProduct commandProduct = new CommandProduct(product);
         //commandProduct.setComentario(productObj.getString("comentario"));
         commandProduct.setEstado(productObj.getString("estado"));

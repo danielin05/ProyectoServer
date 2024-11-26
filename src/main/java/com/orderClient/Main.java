@@ -105,6 +105,8 @@ public class Main extends Application {
                         String type = obj.getString("type");
                     
                         if ("comandsData".equals(type)) {
+
+                            System.out.println(message);
                     
                             JSONArray comandsArray = obj.getJSONArray("list");
                             System.out.println(comandsArray.toString());
@@ -134,8 +136,13 @@ public class Main extends Application {
                     
                                     Product product = new Product(
                                         productObject.getString("nombre"), 
-                                        productObject.getString("preu")
+                                        productObject.getString("preu"),
+                                        productObject.getString("descripcio"),
+                                        productObject.getString("imatge")
                                     );
+
+                                    System.out.println(product.getImageBase64());
+
                                     product.setDescription(productObject.optString("description", ""));
                     
                                     List<String> tags = new ArrayList<>();

@@ -1,7 +1,6 @@
 package com.orderClient;
 
 import com.Objects.CommandProduct;
-import com.Objects.Product;
 import com.Objects.UtilsViews;
 
 import javafx.event.ActionEvent;
@@ -10,12 +9,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+
+import java.io.ByteArrayInputStream;
 
 import org.json.JSONObject;
 
@@ -29,6 +31,9 @@ public class ControllerDetailsOrder {
 
     @FXML
     private TableColumn<CommandProduct, Boolean> checkColumn;
+
+    @FXML
+    private TableColumn<CommandProduct, String> imageColumn;
 
     @FXML
     private Text numTaula;
@@ -243,6 +248,11 @@ public class ControllerDetailsOrder {
             return new SimpleStringProperty(product.getProducte().getNombre()); // Asume que CommandProduct tiene un método getProductName()
         });
 
+        imageColumn.setCellValueFactory(cellData -> {
+            CommandProduct product = cellData.getValue();
+            return new SimpleStringProperty(product.getProducte().getImageBase64()); // La imagen en Base64
+        });
+
         // Configuración de la columna CheckBox
         checkColumn.setCellValueFactory(cellData -> {
             CommandProduct product = cellData.getValue();
@@ -284,6 +294,32 @@ public class ControllerDetailsOrder {
                 }
             }
         });
+
+        imageColumn.setCellFactory(param -> new TableCell<CommandProduct, String>() {
+        @Override
+        protected void updateItem(String base64Image, boolean empty) {
+            super.updateItem(base64Image, empty);
+            if (empty || base64Image == null || base64Image.isEmpty()) {
+                setGraphic(null); // Limpiar contenido si no hay imagen
+            } else {
+                try {
+                    // Decodificar la imagen Base64
+                    byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
+                    javafx.scene.image.Image image = new javafx.scene.image.Image(new ByteArrayInputStream(imageBytes));
+                    
+                    // Crear un ImageView y establecer la imagen
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(50); // Ajusta el ancho deseado
+                    imageView.setFitHeight(50); // Ajusta el alto deseado
+                    imageView.setPreserveRatio(true); // Mantener la proporción de la imagen
+                    
+                    setGraphic(imageView); // Añadir el ImageView a la celda
+                } catch (IllegalArgumentException e) {
+                    setGraphic(null);
+                }
+            }
+        }
+    });
 
         // Usamos un TableCell personalizado para la columna CheckBox y cambiar su fondo según el estado
         checkColumn.setCellFactory(param -> new TableCell<CommandProduct, Boolean>() {
