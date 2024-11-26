@@ -28,7 +28,7 @@ public class CommandDAO {
             saveNewCommand(conn, addCommand());
             updateCommand(conn, addCommand());
             updateCommandDetails(conn, addCommand(), commandPizza1);
-            updateProductStatus(conn, addCommand(), "listo", commandPizza1);
+            updateProductStatus(conn, addCommand().getNumber(), "listo", commandPizza1);
             updateCommandStatus(conn, addCommand(), "listo");
             System.out.println(checkMostSelledProducts(conn));
 
@@ -258,7 +258,7 @@ public class CommandDAO {
 
     } 
 
-    public static void updateProductStatus(Connection conn, Comanda comanda, String newStatus, CommandProduct producto){
+    public static void updateProductStatus(Connection conn, int num_mesa, String newStatus, CommandProduct producto){
 
         Integer commandId = 0;
 
@@ -272,7 +272,7 @@ public class CommandDAO {
 
         try (PreparedStatement pstmt = conn.prepareStatement(checkCommandId)) {
 
-            pstmt.setInt(1, comanda.getNumber());
+            pstmt.setInt(1, num_mesa);
 
             ResultSet rs = pstmt.executeQuery();
 

@@ -5,8 +5,10 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,11 +68,12 @@ public class Main extends WebSocketServer {
             CommandProduct commandPizza1 = new CommandProduct(pizzaMargherita);
 
         Connection conn = CommandDAO.DBConnect(CommandDAO.DB_URL);
+
         CommandDAO.saveNewCommand(conn, addCommandTESTDANI());
         CommandDAO.updateCommand(conn, addCommandTESTDANIDOS());
         CommandDAO.updateCommandDetails(conn, addCommandTESTDANIDOS(), commandPizza1);
         CommandDAO.updateCommandStatus(conn,addCommandTESTDANIDOS(), "listo");
-        CommandDAO.updateProductStatus(conn, addCommandTESTDANIDOS(), "listo", commandPizza1);
+        CommandDAO.updateProductStatus(conn, addCommandTESTDANIDOS().getNumber(), "listo", commandPizza1);
 
     }
 
@@ -279,23 +282,71 @@ public class Main extends WebSocketServer {
                     if (existingComanda != null) {
                         // Si la comanda ya existe, agregamos los productos
                         System.out.println("Comanda ya existe, agregando productos...");
+        
+                        // Lista de productos de la comanda existente (productos actuales)
+                        List<CommandProduct> currentProducts = existingComanda.getProducts();
+                        
+                        // Lista de productos nuevos recibidos desde la app
                         JSONArray productsList = comandaObj.getJSONArray("productsList");
-
                         List<CommandProduct> newProducts = new ArrayList<>();
-
+                        
+                        // Convertir los productos nuevos a objetos CommandProduct
                         for (int i = 0; i < productsList.length(); i++) {
                             JSONObject productObj = productsList.getJSONObject(i);
                             CommandProduct commandProduct = createCommandProductFromJson(productObj);
                             newProducts.add(commandProduct);
                         }
 
-                        existingComanda.addProducts(newProducts);
+                        // Paso 1: Contabilizar la cantidad de productos en currentProducts y newProducts
+                        Map<String, Integer> currentProductCount = new HashMap<>();
+                        for (CommandProduct product : currentProducts) {
+                            String productName = product.getProducte().getNombre();
+                            currentProductCount.put(productName, currentProductCount.getOrDefault(productName, 0) + 1);
+                        }
+
+                        Map<String, Integer> newProductCount = new HashMap<>();
+                        for (CommandProduct product : newProducts) {
+                            String productName = product.getProducte().getNombre();
+                            newProductCount.put(productName, newProductCount.getOrDefault(productName, 0) + 1);
+                        }
+
+                        // Paso 2: Verificar si hay productos nuevos que deben añadirse o eliminarse
+                        // Añadir productos nuevos
+                        for (Map.Entry<String, Integer> entry : newProductCount.entrySet()) {
+                            String productName = entry.getKey();
+                            int newQuantity = entry.getValue();
+                            int currentQuantity = currentProductCount.getOrDefault(productName, 0);
+
+                            if (newQuantity > currentQuantity) {
+                                int toAdd = newQuantity - currentQuantity;
+                                System.out.println("Producto añadido: " + productName + ", cantidad: " + toAdd);
+                                // Añadir los productos faltantes a existingComanda
+                                for (int i = 0; i < toAdd; i++) {
+                                }
+                            }
+                        }
+
+                        // Eliminar productos que ya no están en la lista de nuevos
+                        for (Map.Entry<String, Integer> entry : currentProductCount.entrySet()) {
+                            String productName = entry.getKey();
+                            int currentQuantity = entry.getValue();
+                            int newQuantity = newProductCount.getOrDefault(productName, 0);
+
+                            if (currentQuantity > newQuantity) {
+                                int toRemove = currentQuantity - newQuantity;
+                                System.out.println("Producto eliminado: " + productName + ", cantidad: " + toRemove);
+                                // Eliminar los productos sobrantes de existingComanda
+                                for (int i = 0; i < toRemove; i++) {
+                                }
+                            }
+                        }
 
                         // Actualizamos el estado de la comanda
                         updateComandaEstado(existingComanda);
 
                         // Enviar actualización a todos los clientes
                         broadcast(loadCommandsData());
+
                     } else {
                         // Si la comanda no existe, creamos una nueva
                         System.out.println("Creando nueva comanda...");
