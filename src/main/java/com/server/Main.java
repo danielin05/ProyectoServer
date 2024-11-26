@@ -425,9 +425,9 @@ public class Main extends WebSocketServer {
                     product.put("nom", elemento.getElementsByTagName("nom").item(0).getTextContent());
                     product.put("preu", elemento.getElementsByTagName("preu").item(0).getTextContent());
                     product.put("descripcio", elemento.getElementsByTagName("descripcio").item(0).getTextContent());
-                    String imageURL = System.getProperty("user.dir") + "\\src\\main\\resources\\productImages\\" + elemento.getElementsByTagName("imatge").item(0).getTextContent();
+                    String imageURL = System.getProperty("user.dir") + "/src/main/resources/productImages/" + elemento.getElementsByTagName("imatge").item(0).getTextContent();
                     String base64ImageString = base64Transform.convertImageToBase64(imageURL);
-                    base64Transform.convertirBase64ToImage(base64ImageString, elemento.getElementsByTagName("imatge").item(0).getTextContent(), "src\\main\\resources\\producImagesDecoded");
+                    base64Transform.convertirBase64ToImage(base64ImageString, elemento.getElementsByTagName("imatge").item(0).getTextContent(), "src/main/resources/producImagesDecoded");
                     product.put("imatge", base64ImageString);
 
                     productList.put(product);
