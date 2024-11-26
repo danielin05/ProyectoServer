@@ -205,7 +205,7 @@ public class Main extends WebSocketServer {
                 
                             List<CommandProduct> currentProducts = existingComanda.getProducts();
                             JSONArray productsList = comandaObj.getJSONArray("productsList");
-                
+                        
                             List<CommandProduct> newProducts = new ArrayList<>();
                             for (int i = 0; i < productsList.length(); i++) {
                                 JSONObject productObj = productsList.getJSONObject(i);
@@ -299,9 +299,15 @@ public class Main extends WebSocketServer {
             if (currentQuantity > newQuantity) {
                 int toRemove = currentQuantity - newQuantity;
                 for (int i = 0; i < toRemove; i++) {
-                    existingComanda.getProducts().removeIf(product -> product.getProducte().getNombre().equals(productName));
+                    // Buscar y eliminar solo un producto que coincida
+                    existingComanda.getProducts().removeIf(product -> {
+                        if (product.getProducte().getNombre().equals(productName)) {
+                            return true; // Eliminar el producto encontrado
+                        }
+                        return false; // Mantener los demás productos
+                    });
                 }
-            }
+            }  
         }
     }
     
